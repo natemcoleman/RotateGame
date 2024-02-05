@@ -11,25 +11,47 @@ class CircleApp:
 
         self.circles = []  # List to store information about circles
 
-        circle_info = {"size": 200, "angle": 0, "orbit_radius": 100, "color": "white"}
+        Main1CenterX = 100
+        Main1CenterY = 100
+
+        Main2CenterX = -100
+        Main2CenterY = -100
+
+        circle_info = {"size": 200, "angle": 0, "orbit_radius": 100, "color": "white", "centerX": Main1CenterX, "centerY": Main1CenterY}
         self.create_main_circle(circle_info)
         self.create_orbit_circle(circle_info)
 
-        circle_info = {"size": 150, "angle": 0, "orbit_radius": 75, "color": "white"}
+        circle_info = {"size": 150, "angle": 0, "orbit_radius": 75, "color": "white", "centerX": Main1CenterX, "centerY": Main1CenterY}
         self.create_main_circle(circle_info)
         self.create_orbit_circle(circle_info)
 
-        circle_info = {"size": 100, "angle": 0, "orbit_radius": 50, "color": "white"}
+        circle_info = {"size": 100, "angle": 0, "orbit_radius": 50, "color": "white", "centerX": Main1CenterX, "centerY": Main1CenterY}
         self.create_main_circle(circle_info)
         self.create_orbit_circle(circle_info)
+        ###################################
+
+        # circle_info = {"size": 200, "angle": 0, "orbit_radius": 100, "color": "white", "centerX": Main2CenterX,
+        #                "centerY": Main2CenterY}
+        # self.create_main_circle(circle_info)
+        # self.create_orbit_circle(circle_info)
+        #
+        # circle_info = {"size": 150, "angle": 0, "orbit_radius": 75, "color": "white", "centerX": Main2CenterX,
+        #                "centerY": Main2CenterY}
+        # self.create_main_circle(circle_info)
+        # self.create_orbit_circle(circle_info)
+        #
+        # circle_info = {"size": 100, "angle": 0, "orbit_radius": 50, "color": "white", "centerX": Main2CenterX,
+        #                "centerY": Main2CenterY}
+        # self.create_main_circle(circle_info)
+        # self.create_orbit_circle(circle_info)
 
 
         self.root.bind('<Configure>', self.on_resize)
 
     def create_main_circle(self, circle_info):
         # Calculate initial position of main circle
-        x_center = self.canvas.winfo_reqwidth() / 2
-        y_center = self.canvas.winfo_reqheight() / 2
+        x_center = self.canvas.winfo_reqwidth() / 2 + circle_info["centerX"]
+        y_center = self.canvas.winfo_reqheight() / 2 + circle_info["centerY"]
 
         circle_info["coords"] = (x_center - circle_info["size"] / 2, y_center - circle_info["size"] / 2)
 
