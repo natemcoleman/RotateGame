@@ -8,33 +8,37 @@ class MovingPoint:
         self.hasBeenMoved = False
 
 
-def PlotAllPoints(ax, points, positions, delayVal, majorCirclesCenters, majorCirclesRadii):
-    for i in range(len(majorCirclesCenters)):
-        currCircle = plt.Circle(majorCirclesCenters[i], majorCirclesRadii[i], color='k', fill=False)
-        ax.add_patch(currCircle)
+def PlotAllPoints(currAx, points, pointPositions, delayVal, plotPointNum):
     counterNum = 0
     for point in points:
-        ax.scatter(positions[point.positionIndex][0], positions[point.positionIndex][1], color=point.color)
-        ax.text(positions[point.positionIndex][0], positions[point.positionIndex][1], str(counterNum), verticalalignment='bottom', horizontalalignment='right')
+        currAx.scatter(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], color=point.color)
+        if plotPointNum:
+            currAx.text(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], str(counterNum), verticalalignment='bottom', horizontalalignment='right')
         counterNum += 1
         if delayVal > 0:
             plt.pause(delayVal)
     plt.show()
 
 
-def Rotate(points, CCW, movements):
+def Rotate(points, CW, movements):
     for move in movements:
         for point in points:
-            if CCW:
-                if move[0] == point.positionIndex and point.hasBeenMoved is False:
-                    point.positionIndex = move[1]
-                    point.hasBeenMoved = True
-            else:
-                if move[1] == point.positionIndex and point.hasBeenMoved is False:
-                    point.positionIndex = move[0]
-                    point.hasBeenMoved = True
+            if move[CW] == point.positionIndex and point.hasBeenMoved is False:
+                point.positionIndex = move[not CW]
+                point.hasBeenMoved = True
+
     for point in points:
         point.hasBeenMoved = False
+
+
+def CheckIfSolved(points):
+    checkIndexNum = 0
+    solved = True
+    for point in points:
+        if point.positionIndex != checkIndexNum:
+            solved = False
+        checkIndexNum += 1
+    return solved
 
 
 majorCirclesCentersOuter = [(-50, 28.867513), (-50, 28.867513), (0, -57.735027), (0, -57.735027), (50, 28.867513), (50, 28.867513)]
@@ -48,12 +52,12 @@ face3 = [8, 9, 10, 11]
 face4 = [12, 13, 14, 15]
 face5 = [16, 17, 18, 19]
 face6 = [20, 21, 22, 23]
-rotateCircle1CounterClockwise = [(0, 15), (2, 14), (15, 18), (14, 19), (18, 9), (19, 11), (9, 0), (11, 2), (21, 20), (20, 22), (22, 23), (23, 21)]
-rotateCircle2CounterClockwise = [(1, 13), (3, 12), (13, 16), (12, 17), (16, 8), (17, 10), (8, 1), (10, 3), (4, 5), (5, 7), (7, 6), (6, 4)]
-rotateCircle3CounterClockwise = [(0, 5), (1, 7), (5, 17), (7, 19), (17, 23), (19, 22), (23, 0), (22, 1), (13, 15), (15, 14), (14, 12), (12, 13)]
-rotateCircle4CounterClockwise = [(2, 4), (3, 6), (4, 16), (6, 18), (16, 21), (18, 20), (21, 2), (20, 3), (9, 8), (8, 10), (10, 11), (11, 9)]
-rotateCircle5CounterClockwise = [(4, 12), (5, 14), (12, 22), (14, 20), (22, 9), (20, 8), (9, 4), (8, 5), (2, 3), (3, 1), (1, 0), (0, 2)]
-rotateCircle6CounterClockwise = [(6, 13), (7, 15), (13, 23), (15, 21), (23, 11), (21, 10), (11, 6), (10, 7), (16, 17), (17, 19), (19, 18), (18, 16)]
+rotateCircle1CCW = [(0, 15), (2, 14), (15, 18), (14, 19), (18, 9), (19, 11), (9, 0), (11, 2), (21, 20), (20, 22), (22, 23), (23, 21)]
+rotateCircle2CCW = [(1, 13), (3, 12), (13, 16), (12, 17), (16, 8), (17, 10), (8, 1), (10, 3), (4, 5), (5, 7), (7, 6), (6, 4)]
+rotateCircle3CCW = [(0, 5), (1, 7), (5, 17), (7, 19), (17, 23), (19, 22), (23, 0), (22, 1), (13, 15), (15, 14), (14, 12), (12, 13)]
+rotateCircle4CCW = [(2, 4), (3, 6), (4, 16), (6, 18), (16, 21), (18, 20), (21, 2), (20, 3), (9, 8), (8, 10), (10, 11), (11, 9)]
+rotateCircle5CCW = [(4, 12), (5, 14), (12, 22), (14, 20), (22, 9), (20, 8), (9, 4), (8, 5), (2, 3), (3, 1), (1, 0), (0, 2)]
+rotateCircle6CCW = [(6, 13), (7, 15), (13, 23), (15, 21), (23, 11), (21, 10), (11, 6), (10, 7), (16, 17), (17, 19), (19, 18), (18, 16)]
 
 red1 = MovingPoint(0, '#b80a31')
 red2 = MovingPoint(1, '#b80a31')
@@ -96,12 +100,17 @@ ax.set_xticks([])
 ax.set_yticks([])
 plt.ion()
 
-PlotAllPoints(ax, allPoints, positions, 0.1, majorCirclesCentersOuter, majorCirclesRadiiOuter)
-Rotate(allPoints, True, rotateCircle5CounterClockwise)
+for i in range(len(majorCirclesCentersOuter)):
+    currCircle = plt.Circle(majorCirclesCentersOuter[i], majorCirclesRadiiOuter[i], color='k', fill=False)
+    ax.add_patch(currCircle)
+
+PlotAllPoints(ax, allPoints, positions, 0, False)
+Rotate(allPoints, True, rotateCircle5CCW)
+
+Rotate(allPoints, True, rotateCircle1CCW)
+Rotate(allPoints, False, rotateCircle1CCW)
+Rotate(allPoints, False, rotateCircle5CCW)
+
+print(CheckIfSolved(allPoints))
 plt.ioff()
-Rotate(allPoints, False, rotateCircle1CounterClockwise)
-Rotate(allPoints, True, rotateCircle1CounterClockwise)
-Rotate(allPoints, False, rotateCircle5CounterClockwise)
-
-PlotAllPoints(ax, allPoints, positions, 0.1, majorCirclesCentersOuter, majorCirclesRadiiOuter)
-
+PlotAllPoints(ax, allPoints, positions, 0, False)
