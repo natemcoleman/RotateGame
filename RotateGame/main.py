@@ -1,5 +1,6 @@
 import TwoMain
 from matplotlib import pyplot as plt
+import keyboard
 
 rotations = TwoMain.ReturnCircleMovements()
 # allPoints = TwoMain.CreateAllPoints()
@@ -44,21 +45,22 @@ plt.pause(delayNum)
 # TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 
 def update_plot(event):
-    inputVal = int(event.key)
-    # inputVal = int(input("Select next rotation: "))
-    # CWInput = input("Clockwise? y/n: ")
-    # CWBool = True
-    # if CWInput == 'n':
-    #     CWBool = False
-    # else:
-    #     CWBool = True
-    if inputVal == 9:
-        plt.close()
+    inputVal = event.key
+    if keyboard.is_pressed('c'):
+        CWBool = False
     else:
-        TwoMain.Rotate(theCube.points, inputVal, True)
-        TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
-        print("Solved:", TwoMain.CheckIfSolved(theCube.points))
-        plt.pause(0.25)
+        CWBool = True
+
+    if inputVal != 'c':
+        inputVal = int(event.key) - 1
+
+        if inputVal >= 6 or inputVal <= -1:
+            plt.close()
+        else:
+            TwoMain.Rotate(theCube.points, inputVal, CWBool)
+            TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
+            print("Solved:", TwoMain.CheckIfSolved(theCube.points))
+            plt.pause(0.25)
 
 # Connect the update_plot function to keyboard input
 plt.connect('key_press_event', update_plot)
