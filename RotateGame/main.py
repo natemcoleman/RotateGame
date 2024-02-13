@@ -2,7 +2,9 @@ import TwoMain
 from matplotlib import pyplot as plt
 
 rotations = TwoMain.ReturnCircleMovements()
-allPoints = TwoMain.CreateAllPoints()
+# allPoints = TwoMain.CreateAllPoints()
+theCube = TwoMain.TheCube()
+
 majorCirclesCenters, majorCirclesRadii = TwoMain.ReturnCircleCoordsAndRadii()
 
 axisLimits = 200
@@ -19,27 +21,27 @@ for i in range(len(majorCirclesCenters)):
     ax.add_patch(currCircle)
 
 delayNum = 2
-TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 plt.pause(delayNum)
 
-TwoMain.Rotate(allPoints, 5, True)
-TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+TwoMain.Rotate(theCube.points, 0, True)
+TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 plt.pause(delayNum)
-print(TwoMain.CheckIfSolved(allPoints))
+print(TwoMain.CheckIfSolved(theCube.points))
 
-TwoMain.Rotate(allPoints, 2, True)
-TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+TwoMain.Rotate(theCube.points, 1, True)
+TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 plt.pause(delayNum)
+#
+# TwoMain.Rotate(theCube.points, 0, False)
+# TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
+# plt.pause(delayNum)
+#
+# TwoMain.Rotate(theCube.points, 4, False)
 
-TwoMain.Rotate(allPoints, 2, False)
-TwoMain.PlotAllPoints(ax, allPoints, 0, False)
-plt.pause(delayNum)
-
-TwoMain.Rotate(allPoints, 5, False)
-
-print(TwoMain.CheckIfSolved(allPoints))
+print(TwoMain.CheckIfSolved(theCube.points))
 plt.ioff()
-TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 
 
 

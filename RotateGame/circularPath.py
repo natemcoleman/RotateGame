@@ -6,11 +6,15 @@ import math
 
 def ReturnAngleOneAndAngleTwo(positions1, index1, positions2, index2, currMajorCircleCenter):
     angle1 = math.atan2(positions1[index1][1]-currMajorCircleCenter[1], positions1[index1][0]-currMajorCircleCenter[0])
-    angle2 = math.atan2(positions2[index2][1]-currMajorCircleCenter[1], currMajorCircleCenter[0])
+    angle2 = math.atan2(positions2[index2][1]-currMajorCircleCenter[1], positions2[index2][0]-currMajorCircleCenter[0])
     print("point 1:", positions1[index1])
     print("point 2:", positions2[index2])
     print("circleCenter:", currMajorCircleCenter)
 
+    if angle1 < 0:
+        angle1 = (2*math.pi)-angle1
+    if angle2 < 0:
+        angle2 = (2*math.pi)-angle2
 
     return math.degrees(angle1), math.degrees(angle2)
 

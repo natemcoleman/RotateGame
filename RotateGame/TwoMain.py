@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import math
 
 
 class MovingPoint:
@@ -6,6 +7,11 @@ class MovingPoint:
         self.positionIndex = initPositionIndex
         self.color = initColor
         self.hasBeenMoved = False
+
+
+class TheCube:
+    def __init__(self):
+        self.points = CreateAllPoints()
 
 
 def PlotAllPoints(currAx, points, delayVal, plotPointNum):
@@ -23,10 +29,13 @@ def PlotAllPoints(currAx, points, delayVal, plotPointNum):
 
 def Rotate(points, circleNum, CW):
     allMovements = ReturnCircleMovements()
-    movements = allMovements[circleNum-1]
+    movements = allMovements[circleNum]
     for move in movements:
         for point in points:
             if move[CW] == point.positionIndex and point.hasBeenMoved is False:
+                if point.positionIndex == 0:
+                    ReturnAngleOneAndAngleTwo(point.positionIndex, move[not CW], circleNum)
+
                 point.positionIndex = move[not CW]
                 point.hasBeenMoved = True
 
@@ -39,9 +48,21 @@ def CheckIfSolved(points):
     solved = True
     for point in points:
         if point.positionIndex != checkIndexNum:
-            solved = False
+            return False
         checkIndexNum += 1
     return solved
+
+
+
+def ReturnFaces():
+    face1 = [0, 1, 2, 3]
+    face2 = [4, 5, 6, 7]
+    face3 = [8, 9, 10, 11]
+    face4 = [12, 13, 14, 15]
+    face5 = [16, 17, 18, 19]
+    face6 = [20, 21, 22, 23]
+    return [face1, face2, face3, face4, face5, face6]
+
 
 
 def ReturnPositions():
@@ -110,6 +131,26 @@ def ReturnCircleCoordsAndRadii():
                                 (50, 28.867513)]
     majorCirclesRadii = [110, 90, 110, 90, 110, 90]
     return majorCirclesCenters, majorCirclesRadii
+
+
+def ReturnAngleOneAndAngleTwo(index1, index2, currMajorCircleCenter):
+    positions = ReturnPositions()
+
+    circleCenter = ReturnCircleCoordsAndRadii()[0][currMajorCircleCenter]
+    angle1 = math.atan2(positions[index1][1] - circleCenter[1],
+                        positions[index1][0] - circleCenter[0])
+    angle2 = math.atan2(positions[index2][1] - circleCenter[1],
+                        positions[index2][0] - circleCenter[0])
+
+    if angle1 < 0:
+        angle1 = (2 * math.pi) - angle1
+    if angle2 < 0:
+        angle2 = (2 * math.pi) - angle2
+
+
+    return angle1, angle2
+
+
 
 # majorCirclesCentersOuter = [(-50, 28.867513), (-50, 28.867513), (0, -57.735027), (0, -57.735027), (50, 28.867513), (50, 28.867513)]
 # majorCirclesRadiiOuter = [110, 90, 110, 90, 110, 90]
