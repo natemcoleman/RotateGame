@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import math
-
+import numpy as np
 
 class MovingPoint:
     def __init__(self, initPositionIndex, initColor):
@@ -44,15 +44,21 @@ def Rotate(points, circleNum, CW):
 
 
 def CheckIfSolved(points):
-    checkIndexNum = 0
     solved = True
-    for point in points:
-        if point.positionIndex != checkIndexNum:
-            return False
-        checkIndexNum += 1
+
+    segments = np.array(points).reshape(-1, 4)
+    faces = ReturnFaces()
+    for segment in segments:
+        correctFace = -1
+        for currPointIndex in range(len(segment)):
+            if currPointIndex == 0:
+                for faceIndex in range(len(faces)):
+                    if segment[currPointIndex].positionIndex in faces[faceIndex]:
+                        correctFace = faceIndex
+            elif segment[currPointIndex].positionIndex not in faces[correctFace]:
+                return False
+
     return solved
-
-
 
 def ReturnFaces():
     face1 = [0, 1, 2, 3]
