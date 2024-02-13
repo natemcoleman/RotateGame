@@ -18,10 +18,23 @@ for i in range(len(majorCirclesCenters)):
     currCircle = plt.Circle(majorCirclesCenters[i], majorCirclesRadii[i], color='k', fill=False)
     ax.add_patch(currCircle)
 
+delayNum = 2
 TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+plt.pause(delayNum)
+
 TwoMain.Rotate(allPoints, 5, True)
-TwoMain.Rotate(allPoints, 1, True)
-TwoMain.Rotate(allPoints, 1, False)
+TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+plt.pause(delayNum)
+print(TwoMain.CheckIfSolved(allPoints))
+
+TwoMain.Rotate(allPoints, 2, True)
+TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+plt.pause(delayNum)
+
+TwoMain.Rotate(allPoints, 2, False)
+TwoMain.PlotAllPoints(ax, allPoints, 0, False)
+plt.pause(delayNum)
+
 TwoMain.Rotate(allPoints, 5, False)
 
 print(TwoMain.CheckIfSolved(allPoints))
