@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import math
 import numpy as np
+import random
 
 class MovingPoint:
     def __init__(self, initPositionIndex, initColor):
@@ -15,10 +16,21 @@ class TheCube:
 
 
 def PlotAllPoints(currAx, points, delayVal, plotPointNum):
+    currAx.clear()
+    currAx.axis('equal')
+    currAx.set_xticks([])
+    currAx.set_yticks([])
+    plt.ion()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+    colors = ReturnColors()
+    for i in range(len(majorCirclesCenters)):
+        currCircle = plt.Circle(majorCirclesCenters[i], majorCirclesRadii[i], color='k', fill=False)
+        currAx.add_patch(currCircle)
+
     pointPositions = ReturnPositions()
     counterNum = 0
     for point in points:
-        currAx.scatter(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], color=point.color)
+        currAx.scatter(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], color=colors[point.color], linewidths=5)
         if plotPointNum:
             currAx.text(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], str(counterNum), verticalalignment='bottom', horizontalalignment='right')
         counterNum += 1
@@ -27,15 +39,17 @@ def PlotAllPoints(currAx, points, delayVal, plotPointNum):
     plt.show()
 
 
+def ResetPoints(points):
+    for pointIndex in range(len(points)):
+        points[pointIndex].positionIndex = pointIndex
+
+
 def Rotate(points, circleNum, CW):
     allMovements = ReturnCircleMovements()
     movements = allMovements[circleNum]
     for move in movements:
         for point in points:
             if move[CW] == point.positionIndex and point.hasBeenMoved is False:
-                if point.positionIndex == 0:
-                    ReturnAngleOneAndAngleTwo(point.positionIndex, move[not CW], circleNum)
-
                 point.positionIndex = move[not CW]
                 point.hasBeenMoved = True
 
@@ -46,19 +60,77 @@ def Rotate(points, circleNum, CW):
 def CheckIfSolved(points):
     solved = True
 
-    segments = np.array(points).reshape(-1, 4)
     faces = ReturnFaces()
-    for segment in segments:
-        correctFace = -1
-        for currPointIndex in range(len(segment)):
-            if currPointIndex == 0:
-                for faceIndex in range(len(faces)):
-                    if segment[currPointIndex].positionIndex in faces[faceIndex]:
-                        correctFace = faceIndex
-            elif segment[currPointIndex].positionIndex not in faces[correctFace]:
-                return False
+    for face in faces:
+        currFaceColors = []
+        for faceIndex in face:
+            for point in points:
+                if point.positionIndex == faceIndex:
+                    currFaceColors.append(point.color)
+        if not all(element == currFaceColors[0] for element in currFaceColors):
+            return False
 
+    print("SOLVED!")
     return solved
+
+
+def FindColorsOnFace(points):
+    faces = ReturnFaces()
+    maxColorsOnFace = 0
+    maxFace = []
+    elementsOnMaxFace = []
+    elementCountsOnMaxFace = []
+    facesIndex = 0
+    maxFacesIndex = -1
+    for face in faces:
+        currFaceColors = []
+        for faceIndex in face:
+            for point in points:
+                if point.positionIndex == faceIndex:
+                    currFaceColors.append(point.color)
+
+        elements = []
+        element_counts = []
+
+        for currColor in currFaceColors:
+            if currColor in elements:
+                index = elements.index(currColor)
+                element_counts[index] += 1
+            else:
+                elements.append(currColor)
+                element_counts.append(1)
+        if max(element_counts) > maxColorsOnFace:
+            maxColorsOnFace = max(element_counts)
+            maxFace = face
+            elementsOnMaxFace = elements
+            elementCountsOnMaxFace = element_counts
+            maxFacesIndex = facesIndex
+        facesIndex += 1
+    # print("maxFace:", maxFace)
+    # print("maxFacesIndex:", maxFacesIndex)
+    # print("elementsOnMaxFace:", elementsOnMaxFace)
+    # print("elementCountsOnMaxFace:", elementCountsOnMaxFace)
+
+def SolveCube(points):
+    FindColorsOnFace(points)
+    print("not solved :(")
+
+
+def RandomizeCube(points):
+    # newIndices = list(range(len(points)))
+    #
+    # random.shuffle(newIndices)
+    # for pointIndex in range(len(points)):
+    #     points[pointIndex].positionIndex = newIndices[pointIndex]
+
+    numRandomRotations = 3
+    random_values = [random.randint(0, 5) for _ in range(numRandomRotations)]
+    random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
+
+    for randomIndex in range(numRandomRotations):
+        Rotate(points, random_values[randomIndex], random_bools[randomIndex])
+        print("Circle:", random_values[randomIndex]+1, " CW:", random_bools[randomIndex])
+
 
 def ReturnFaces():
     face1 = [0, 1, 2, 3]
@@ -70,7 +142,6 @@ def ReturnFaces():
     return [face1, face2, face3, face4, face5, face6]
 
 
-
 def ReturnPositions():
     return [(0, 126.847103), (-20, 113.720327), (20, 113.720327), (0, 103.700661), (-38.484692, 45.313158),
                  (-59.852814, 34.556038), (-39.807407, 22.982817), (-58.484692, 10.672142), (38.484692, 45.313158),
@@ -80,36 +151,40 @@ def ReturnPositions():
                  (109.852814, -63.423552), (88.484692, -74.180672)]
 
 
+def ReturnColors():
+    return ['#b80a31', '#0044af', '#009c46', 'm', '#ffd600', '#ff5700']
+
+
 def CreateAllPoints():
-    red1 = MovingPoint(0, '#b80a31')
-    red2 = MovingPoint(1, '#b80a31')
-    red3 = MovingPoint(2, '#b80a31')
-    red4 = MovingPoint(3, '#b80a31')
+    red1 = MovingPoint(0, 0)
+    red2 = MovingPoint(1, 0)
+    red3 = MovingPoint(2, 0)
+    red4 = MovingPoint(3, 0)
 
-    blue1 = MovingPoint(4, '#0044af')
-    blue2 = MovingPoint(5, '#0044af')
-    blue3 = MovingPoint(6, '#0044af')
-    blue4 = MovingPoint(7, '#0044af')
+    blue1 = MovingPoint(4, 1)
+    blue2 = MovingPoint(5, 1)
+    blue3 = MovingPoint(6, 1)
+    blue4 = MovingPoint(7, 1)
 
-    green1 = MovingPoint(8, '#009c46')
-    green2 = MovingPoint(9, '#009c46')
-    green3 = MovingPoint(10, '#009c46')
-    green4 = MovingPoint(11, '#009c46')
+    green1 = MovingPoint(8, 2)
+    green2 = MovingPoint(9, 2)
+    green3 = MovingPoint(10, 2)
+    green4 = MovingPoint(11, 2)
 
-    purple1 = MovingPoint(12, 'm')
-    purple2 = MovingPoint(13, 'm')
-    purple3 = MovingPoint(14, 'm')
-    purple4 = MovingPoint(15, 'm')
+    purple1 = MovingPoint(12, 3)
+    purple2 = MovingPoint(13, 3)
+    purple3 = MovingPoint(14, 3)
+    purple4 = MovingPoint(15, 3)
 
-    yellow1 = MovingPoint(16, '#ffd600')
-    yellow2 = MovingPoint(17, '#ffd600')
-    yellow3 = MovingPoint(18, '#ffd600')
-    yellow4 = MovingPoint(19, '#ffd600')
+    yellow1 = MovingPoint(16, 4)
+    yellow2 = MovingPoint(17, 4)
+    yellow3 = MovingPoint(18, 4)
+    yellow4 = MovingPoint(19, 4)
 
-    cyan1 = MovingPoint(20, '#ff5700')
-    cyan2 = MovingPoint(21, '#ff5700')
-    cyan3 = MovingPoint(22, '#ff5700')
-    cyan4 = MovingPoint(23, '#ff5700')
+    cyan1 = MovingPoint(20, 5)
+    cyan2 = MovingPoint(21, 5)
+    cyan3 = MovingPoint(22, 5)
+    cyan4 = MovingPoint(23, 5)
 
     return [red1, red2, red3, red4, blue1, blue2, blue3, blue4, green1, green2, green3, green4, purple1, purple2,
                  purple3, purple4, yellow1, yellow2, yellow3, yellow4, cyan1, cyan2, cyan3, cyan4]
@@ -139,23 +214,21 @@ def ReturnCircleCoordsAndRadii():
     return majorCirclesCenters, majorCirclesRadii
 
 
-def ReturnAngleOneAndAngleTwo(index1, index2, currMajorCircleCenter):
-    positions = ReturnPositions()
-
-    circleCenter = ReturnCircleCoordsAndRadii()[0][currMajorCircleCenter]
-    angle1 = math.atan2(positions[index1][1] - circleCenter[1],
-                        positions[index1][0] - circleCenter[0])
-    angle2 = math.atan2(positions[index2][1] - circleCenter[1],
-                        positions[index2][0] - circleCenter[0])
-
-    if angle1 < 0:
-        angle1 = (2 * math.pi) - angle1
-    if angle2 < 0:
-        angle2 = (2 * math.pi) - angle2
-
-
-    return angle1, angle2
-
+# def ReturnAngleOneAndAngleTwo(index1, index2, currMajorCircleCenter):
+#     positions = ReturnPositions()
+#
+#     circleCenter = ReturnCircleCoordsAndRadii()[0][currMajorCircleCenter]
+#     angle1 = math.atan2(positions[index1][1] - circleCenter[1],
+#                         positions[index1][0] - circleCenter[0])
+#     angle2 = math.atan2(positions[index2][1] - circleCenter[1],
+#                         positions[index2][0] - circleCenter[0])
+#
+#     if angle1 < 0:
+#         angle1 = (2 * math.pi) - angle1
+#     if angle2 < 0:
+#         angle2 = (2 * math.pi) - angle2
+#
+#     return angle1, angle2
 
 
 # majorCirclesCentersOuter = [(-50, 28.867513), (-50, 28.867513), (0, -57.735027), (0, -57.735027), (50, 28.867513), (50, 28.867513)]
