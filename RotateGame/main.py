@@ -16,7 +16,12 @@ def update_plot(event):
         TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 
     elif inputVal == 'x':
-        TwoMain.RandomizeCube(theCube.points)
+        numRandomRotations = 3
+        TwoMain.RandomizeCube(theCube.points, numRandomRotations)
+        TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
+
+    elif inputVal == 'v':
+        TwoMain.FullyRandomizeCube(theCube.points)
         TwoMain.PlotAllPoints(ax, theCube.points, 0, False)
 
     elif inputVal == 'a':
