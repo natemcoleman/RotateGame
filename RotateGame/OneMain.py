@@ -347,12 +347,15 @@ def CheckIfFaceIsSolved(faceIndex, points):
     return solved
 
 
-def CheckIfSolved(points):
+def CheckIfSolved(points, correctOrder):
     solved = True
 
-    for i in range(6):
-        faceSolvedBool = CheckIfFaceIsSolved(i, points)
-        if not faceSolvedBool:
+    # for i in range(6):
+    #     faceSolvedBool = CheckIfFaceIsSolved(i, points)
+    #     if not faceSolvedBool:
+    #         return False
+    for checkIndex in range(len(points)):
+        if points[checkIndex].positionIndex != correctOrder[checkIndex]:
             return False
 
     print("SOLVED!")
@@ -361,9 +364,64 @@ def CheckIfSolved(points):
 
 def CreateRandomOrder(points):
     newIndices = list(range(len(points)))
+    random.shuffle(newIndices)
 
-    return random.shuffle(newIndices)
+    return newIndices
 
+
+def ShowSolution(solutionScreen, correctOrder):
+    tempPoints = CreateAllPoints()
+
+    for tempPointIndex in range(len(tempPoints)):
+        tempPoints[tempPointIndex].positionIndex = correctOrder[tempPointIndex]
+
+    white = (255, 255, 255)
+    solutionScreen.fill(white)
+    circle_radius = 20
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+
+    pointPositions = ReturnPositions()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+
+    # Unpack the vector into separate lists for the first and second elements
+    first_elements, second_elements = zip(*pointPositions)
+    # Find maximum and minimum values for the first and second elements
+    max_first = max(first_elements)
+    min_first = min(first_elements)
+    max_second = max(second_elements)
+    min_second = min(second_elements)
+
+    rangeY = (max_second - min_second) + max(majorCirclesRadii) * 2
+    rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
+    scaleVal = 1
+
+    if screenWidth < screenHeight:
+        scaleVal = screenWidth / rangeX
+
+    else:
+        scaleVal = screenHeight / rangeY
+
+    colors = ReturnColorsRBG()
+
+    for i in range(len(majorCirclesCenters)):
+        pygame.gfxdraw.aacircle(solutionScreen, int((majorCirclesCenters[i][0] * scaleVal + screenWidth / 2)),
+                                int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
+                                int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
+
+    pointPositions = ReturnPositions()
+    counterNum = 0
+    for point in tempPoints:
+        pygame.draw.circle(solutionScreen, colors[point.color], (
+            int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
+            int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                           circle_radius * math.sqrt(scaleVal))
+        pygame.gfxdraw.aacircle(solutionScreen, int((pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2)),
+                                int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                                int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
+
+        counterNum += 1
+    pygame.display.flip()
 
 def FindFaceWithMaxSameColor(points):
     faces = ReturnFaces()
@@ -462,16 +520,16 @@ def FullyRandomizeCube(points):
 
 
 def RandomizeCube(screen, points, numRandomRotations, cubeMoves):
-    random_values = [random.randint(0, 5) for _ in range(numRandomRotations)]
+    random_values = [random.randint(0, 2) for _ in range(numRandomRotations)]
     random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
 
     for randomIndex in range(numRandomRotations):
         Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex])
         cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
-        if random_bools[randomIndex]:
-            print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
-        else:
-            print("Rotated circle", random_values[randomIndex] + 1, "Counter-Clockwise")
+        # if random_bools[randomIndex]:
+        #     print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
+        # else:
+        #     print("Rotated circle", random_values[randomIndex] + 1, "Counter-Clockwise")
 
     return cubeMoves
 
