@@ -85,7 +85,7 @@ while running:
 
             elif pygame.key.get_pressed()[pygame.K_x]:
                 numRandomRotations = 3
-                moves = TwoMain.RandomizeCube(theCube.points, numRandomRotations, moves)
+                moves = TwoMain.RandomizeCube(screen, theCube.points, numRandomRotations, moves)
 
             elif pygame.key.get_pressed()[pygame.K_v]:
                 TwoMain.FullyRandomizeCube(theCube.points)

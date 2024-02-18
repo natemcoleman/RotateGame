@@ -127,7 +127,12 @@ def GetXYRotationCoords(points, rotationIndex, CW):
 
     for pointIndex in range(len(points)):
         currentPointVec = []
-        if any(pointIndex in my_tuple for my_tuple in movements):
+        # for move in movements:
+        #     if pointIndex == move[CW]:
+        #         endPoint = pointPositions[move[not CW]]
+
+        if any(points[pointIndex].positionIndex in my_tuple for my_tuple in movements):
+            # print(pointIndex)
         # if pointIndex in movements: #does point move?
         #     print("Point ", pointIndex, "moving")
             # what is the end point
@@ -137,6 +142,7 @@ def GetXYRotationCoords(points, rotationIndex, CW):
 
             for move in movements:
                 if move[CW] == points[pointIndex].positionIndex:
+                # if move[CW] == pointIndex:
                     endPoint = pointPositions[move[not CW]]
 
             # try:
@@ -486,12 +492,12 @@ def FullyRandomizeCube(points):
         points[pointIndex].positionIndex = newIndices[pointIndex]
 
 
-def RandomizeCube(points, numRandomRotations, cubeMoves):
+def RandomizeCube(screen, points, numRandomRotations, cubeMoves):
     random_values = [random.randint(0, 5) for _ in range(numRandomRotations)]
     random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
 
     for randomIndex in range(numRandomRotations):
-        Rotate(points, random_values[randomIndex], random_bools[randomIndex])
+        Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex])
         cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
         if random_bools[randomIndex]:
             print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
