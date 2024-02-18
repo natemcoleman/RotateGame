@@ -2,6 +2,7 @@ import TwoMain
 from matplotlib import pyplot as plt
 import keyboard
 import pygame
+import numpy as np
 
 pygame.init()
 
@@ -47,6 +48,18 @@ theCube = TwoMain.TheCube()
 #     plt.waitforbuttonpress()
 #
 # plt.close()
+
+tempVec = [(108.484692, -39.539656), (89.807407, -51.850331),
+                 (109.852814, -63.423552), (88.484692, -74.180672)]
+totalX = 0
+totalY = 0
+for i in range(len(tempVec)):
+    totalY += tempVec[i][1]
+    totalX += tempVec[i][0]
+average_x = totalX/len(tempVec)
+average_y = totalY/len(tempVec)
+print(average_x)
+print(average_y)
 
 moves = []
 # Set up window

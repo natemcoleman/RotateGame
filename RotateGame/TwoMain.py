@@ -100,26 +100,52 @@ def GetClosestLargeCircle(mouseX, mouseY):
     return closest_circle_index
 
 
-def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius, numPoints):
-    # theta1 = math.atan2(startPos[1]-circleCenter[1], startPos[0]-circleCenter[0])
-    # theta2 = math.atan2(endPos[1]-circleCenter[1], endPos[0]-circleCenter[0])
+def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius, numPoints, CCW):
+    if CCW:
+        tempPoint = startPos
+        startPos = endPos
+        endPos = tempPoint
 
-    returnCoords = []
+
+    theta1 = math.atan2(startPos[1]-circleCenter[1], startPos[0]-circleCenter[0])
+    theta2 = math.atan2(endPos[1]-circleCenter[1], endPos[0]-circleCenter[0])
+
+    if theta2 < 0 and theta1 > 0:
+        theta1 -= 2*math.pi
+
+    # if circleRadius < 50 and (theta1 < 0 and theta2 > 0):
+    #     theta2 -= 2*math.pi
+    #
+    # if circleRadius < 50 and (theta2 < 0 and theta1 > 0):
+    #     theta2 += 2*math.pi
     # equally_spaced_vector = np.linspace(theta1, theta2, numPoints)
 
-    # for i in range(len(equally_spaced_vector)):
-    #     returnCoords.append(pol2cart(circleRadius, equally_spaced_vector[i]))
-    xCoords = np.linspace(startPos[0], endPos[0], numPoints)
-    yCoords = np.linspace(startPos[1], endPos[1], numPoints)
-    for currIndex in range(numPoints):
-        returnCoords.append((xCoords[currIndex], yCoords[currIndex]))
+    returnCoords = []
+
+    # Cosing spacing allows for acceleration and decelleration of points
+    t = np.linspace(0, np.pi, numPoints)  # Create a linearly spaced vector from 0 to pi
+    equally_spaced_vector = theta1 + 0.5 * (1 - np.cos(t)) * (theta2 - theta1)
+
+    if CCW:
+        equally_spaced_vector = np.flipud(equally_spaced_vector)
+
+    if circleRadius < 50:
+    # Linear Path
+        xCoords = np.linspace(startPos[0], endPos[0], numPoints)
+        yCoords = np.linspace(startPos[1], endPos[1], numPoints)
+        for currIndex in range(numPoints):
+            returnCoords.append((xCoords[currIndex], yCoords[currIndex]))
+    else:
+        for i in range(len(equally_spaced_vector)):
+            initalCoords = pol2cart(circleRadius, equally_spaced_vector[i])
+            returnCoords.append((initalCoords[0] + circleCenter[0], initalCoords[1] + circleCenter[1]))
 
     return returnCoords
 
 
-def GetXYRotationCoords(points, rotationIndex, CW):
+def GetXYRotationCoords(points, rotationIndex, CCW):
     returnCoords = []
-    numPoints = 25
+    numPoints = 50
 
     allMovements = ReturnCircleMovements()
     movements = allMovements[rotationIndex]
@@ -127,51 +153,25 @@ def GetXYRotationCoords(points, rotationIndex, CW):
 
     for pointIndex in range(len(points)):
         currentPointVec = []
-        # for move in movements:
-        #     if pointIndex == move[CW]:
-        #         endPoint = pointPositions[move[not CW]]
 
         if any(points[pointIndex].positionIndex in my_tuple for my_tuple in movements):
-            # print(pointIndex)
-        # if pointIndex in movements: #does point move?
-        #     print("Point ", pointIndex, "moving")
-            # what is the end point
-            # what is the center rotation point for point
-            # what is radius of rotation
             startPoint = pointPositions[points[pointIndex].positionIndex]
-
-            for move in movements:
-                if move[CW] == points[pointIndex].positionIndex:
-                # if move[CW] == pointIndex:
-                    endPoint = pointPositions[move[not CW]]
-
-            # try:
-            #     index_of_tuple = next(index for index, my_tuple in enumerate(movements) if my_tuple[CW] == points[pointIndex].positionIndex)
-            #     endPoint = pointPositions[movements[index_of_tuple][not CW]]
-            # except StopIteration:
-            #     print("Stopped")
-            #     print(points[pointIndex].positionIndex)
-
+            endPoint = ()
             centerRotation = (0, 0)
             centerRadius = 100
-            # for move in movements:
-            #     if move[CW] == points[pointIndex].positionIndex:
-            #         endPoint = pointPositions[move[not CW]]
-            #         # print("endPoint:", endPoint)
-            #         if endPoint == ():
-            #             print("Empty")
-            #             print("move:", move)
-            #             print("pointPositions:", pointPositions)
-            #             print("pointPositions[move[not CW]]:", pointPositions[move[not CW]])
-            # print("startPoint:", startPoint, " endPoint:", endPoint)
-            currentPointVec = XYCoordinatesFromLocationChange(startPoint, endPoint, centerRotation, centerRadius, numPoints)
+            centersAndRadii = ReturnCircleMovementRotations()[rotationIndex]
+
+            for moveIndex in range(len(movements)):
+                if movements[moveIndex][CCW] == points[pointIndex].positionIndex:
+                    endPoint = pointPositions[movements[moveIndex][not CCW]]
+                    centerRotation = (centersAndRadii[moveIndex][0], centersAndRadii[moveIndex][1])
+                    centerRadius = centersAndRadii[moveIndex][2]
+
+            currentPointVec = XYCoordinatesFromLocationChange(startPoint, endPoint, centerRotation, centerRadius, numPoints, CCW)
         else:
             for currInd in range(numPoints):
                 currentPointVec.append(pointPositions[points[pointIndex].positionIndex])
         returnCoords.append(currentPointVec)
-
-    #get an array of xy coords for each point. points that do not move will all be the same
-    #points that do move will be equally spaced from angle start to finish
 
     return returnCoords
 
@@ -484,6 +484,7 @@ def SolveCube(points, cubeMoves):
 
     return cubeMoves
 
+
 def FullyRandomizeCube(points):
     newIndices = list(range(len(points)))
 
@@ -531,7 +532,6 @@ def ReturnColors():
 
 def ReturnColorsRBG():
     return [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
-
 
 
 def CreateAllPoints():
@@ -582,6 +582,24 @@ def ReturnCircleMovements():
                         (0, 2)]
     rotateCircle6CCW = [(6, 13), (7, 15), (13, 23), (15, 21), (23, 11), (21, 10), (11, 6), (10, 7), (16, 17), (17, 19),
                         (19, 18), (18, 16)]
+
+    return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW, rotateCircle6CCW]
+
+
+def ReturnCircleMovementRotations():
+    smallRadius = 20
+    rotateCircle1CCW = [(-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (99.15740125, -57.24855275, smallRadius), (99.15740125, -57.24855275, smallRadius),
+                        (99.15740125, -57.24855275, smallRadius), (99.15740125, -57.24855275, smallRadius)]
+    rotateCircle2CCW = [(-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, smallRadius), (-50, 28.867513, smallRadius),
+                        (-50, 28.867513, smallRadius), (-50, 28.867513, smallRadius)]
+    rotateCircle3CCW = [(50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (-99.15740125, -57.24855275, smallRadius), (-99.15740125, -57.24855275, smallRadius),
+                        (-99.15740125, -57.24855275, smallRadius), (-99.15740125, -57.24855275, smallRadius)]
+    rotateCircle4CCW = [(50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, smallRadius), (50, 28.867513, smallRadius),
+                        (50, 28.867513, smallRadius), (50, 28.867513, smallRadius)]
+    rotateCircle5CCW = [(0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, 114.4971045, smallRadius), (0, 114.4971045, smallRadius), (0, 114.4971045, smallRadius),
+                        (0, 114.4971045, smallRadius)]
+    rotateCircle6CCW = [(0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, smallRadius), (0, -57.735027, smallRadius),
+                        (0, -57.735027, smallRadius), (0, -57.735027, smallRadius)]
 
     return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW, rotateCircle6CCW]
 
