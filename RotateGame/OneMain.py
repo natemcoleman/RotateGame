@@ -50,7 +50,7 @@ def GetClosestLargeCircle(mouseX, mouseY):
 
     for i, (center_x, center_y) in enumerate(majorCirclesCenters):
         distance_to_center = math.sqrt((mouseX - (screenWidth / 2) - center_x * scaleVal) ** 2 + (
-                    mouseY - (screenHeight / 2) - center_y * scaleVal) ** 2)
+                mouseY - (screenHeight / 2) - center_y * scaleVal) ** 2)
         distance_to_edge = abs(distance_to_center - majorCirclesRadii[i] * scaleVal)
 
         # Update the closest circle if the current circle is closer
@@ -134,7 +134,7 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
-    circle_radius = 10
+    circle_radius = 20
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
 
@@ -233,7 +233,7 @@ def updateGameScreen(screen, points):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
-    circle_radius = 10
+    circle_radius = 20
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
 
@@ -290,10 +290,12 @@ def updateGameScreen(screen, points):
 
     pointPositions = ReturnPositions()
     counterNum = 0
+    pointPositions
     for point in points:
         pygame.draw.circle(screen, colors[point.color], (
-        int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
-        int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)), circle_radius * math.sqrt(scaleVal))
+            int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
+            int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                           circle_radius * math.sqrt(scaleVal))
         pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2)),
                                 int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
                                 int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
@@ -355,6 +357,12 @@ def CheckIfSolved(points):
 
     print("SOLVED!")
     return solved
+
+
+def CreateRandomOrder(points):
+    newIndices = list(range(len(points)))
+
+    return random.shuffle(newIndices)
 
 
 def FindFaceWithMaxSameColor(points):
@@ -469,22 +477,18 @@ def RandomizeCube(screen, points, numRandomRotations, cubeMoves):
 
 
 def ReturnFaces():
-    face1 = [0, 1, 2, 3]
-    face2 = [4, 5, 6, 7]
-    face3 = [8, 9, 10, 11]
-    face4 = [12, 13, 14, 15]
-    face5 = [16, 17, 18, 19]
-    face6 = [20, 21, 22, 23]
+    face1 = [0]
+    face2 = [1]
+    face3 = [2]
+    face4 = [3]
+    face5 = [4]
+    face6 = [5]
     return [face1, face2, face3, face4, face5, face6]
 
 
 def ReturnPositions():
-    return [(0, 126.847103), (-20, 113.720327), (20, 113.720327), (0, 103.700661), (-38.484692, 45.313158),
-            (-59.852814, 34.556038), (-39.807407, 22.982817), (-58.484692, 10.672142), (38.484692, 45.313158),
-            (59.852814, 34.556038), (39.807407, 22.982817), (58.484692, 10.672142), (-108.484692, -39.539656),
-            (-89.807407, -51.850331), (-109.852814, -63.423552), (-88.484692, -74.180672), (0, -45.965634),
-            (-20, -55.9853), (20, -55.9853), (0, -69.112076), (108.484692, -39.539656), (89.807407, -51.850331),
-            (109.852814, -63.423552), (88.484692, -74.180672)]
+    return [(0, 56.276921), (-73.737244, 42.572217), (73.737244, 42.572217), (-48.737244, -28.138461),
+            (48.737244, -28.138461), (0, -85.144435)]
 
 
 def ReturnColorsRBG():
@@ -492,89 +496,44 @@ def ReturnColorsRBG():
 
 
 def CreateAllPoints():
-    red1 = MovingPoint(0, 0)
-    red2 = MovingPoint(1, 0)
-    red3 = MovingPoint(2, 0)
-    red4 = MovingPoint(3, 0)
+    red = MovingPoint(0, 0)
 
-    blue1 = MovingPoint(4, 1)
-    blue2 = MovingPoint(5, 1)
-    blue3 = MovingPoint(6, 1)
-    blue4 = MovingPoint(7, 1)
+    blue = MovingPoint(1, 1)
 
-    green1 = MovingPoint(8, 2)
-    green2 = MovingPoint(9, 2)
-    green3 = MovingPoint(10, 2)
-    green4 = MovingPoint(11, 2)
+    green = MovingPoint(2, 2)
 
-    purple1 = MovingPoint(12, 3)
-    purple2 = MovingPoint(13, 3)
-    purple3 = MovingPoint(14, 3)
-    purple4 = MovingPoint(15, 3)
+    purple = MovingPoint(3, 3)
 
-    yellow1 = MovingPoint(16, 4)
-    yellow2 = MovingPoint(17, 4)
-    yellow3 = MovingPoint(18, 4)
-    yellow4 = MovingPoint(19, 4)
+    yellow = MovingPoint(4, 4)
 
-    cyan1 = MovingPoint(20, 5)
-    cyan2 = MovingPoint(21, 5)
-    cyan3 = MovingPoint(22, 5)
-    cyan4 = MovingPoint(23, 5)
+    cyan = MovingPoint(5, 5)
 
-    return [red1, red2, red3, red4, blue1, blue2, blue3, blue4, green1, green2, green3, green4, purple1, purple2,
-            purple3, purple4, yellow1, yellow2, yellow3, yellow4, cyan1, cyan2, cyan3, cyan4]
+    return [red, blue, green, purple, yellow, cyan]
 
 
 def ReturnCircleMovements():
-    rotateCircle1CCW = [(0, 15), (2, 14), (15, 18), (14, 19), (18, 9), (19, 11), (9, 0), (11, 2), (21, 20), (20, 22),
-                        (22, 23), (23, 21)]
-    rotateCircle2CCW = [(1, 13), (3, 12), (13, 16), (12, 17), (16, 8), (17, 10), (8, 1), (10, 3), (4, 5), (5, 7),
-                        (7, 6), (6, 4)]
-    rotateCircle3CCW = [(0, 5), (1, 7), (5, 17), (7, 19), (17, 23), (19, 22), (23, 0), (22, 1), (13, 15), (15, 14),
-                        (14, 12), (12, 13)]
-    rotateCircle4CCW = [(2, 4), (3, 6), (4, 16), (6, 18), (16, 21), (18, 20), (21, 2), (20, 3), (9, 8), (8, 10),
-                        (10, 11), (11, 9)]
-    rotateCircle5CCW = [(4, 12), (5, 14), (12, 22), (14, 20), (22, 9), (20, 8), (9, 4), (8, 5), (2, 3), (3, 1), (1, 0),
-                        (0, 2)]
-    rotateCircle6CCW = [(6, 13), (7, 15), (13, 23), (15, 21), (23, 11), (21, 10), (11, 6), (10, 7), (16, 17), (17, 19),
-                        (19, 18), (18, 16)]
+    rotateCircle1CCW = [(1, 3), (3, 4), (4, 2), (2, 1)]
+    rotateCircle2CCW = [(1, 5), (5, 4), (4, 0), (0, 1)]
+    rotateCircle3CCW = [(0, 3), (3, 5), (5, 2), (2, 0)]
 
-    return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW, rotateCircle6CCW]
+    return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW]
 
 
 def ReturnCircleMovementRotations():
     smallRadius = -10
-    rotateCircle1CCW = [(-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110),
-                        (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110),
-                        (99.15740125, -57.24855275, smallRadius), (99.15740125, -57.24855275, smallRadius),
-                        (99.15740125, -57.24855275, smallRadius), (99.15740125, -57.24855275, smallRadius)]
-    rotateCircle2CCW = [(-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90),
-                        (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90), (-50, 28.867513, 90),
-                        (-50, 28.867513, smallRadius), (-50, 28.867513, smallRadius),
-                        (-50, 28.867513, smallRadius), (-50, 28.867513, smallRadius)]
-    rotateCircle3CCW = [(50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110),
-                        (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110), (50, 28.867513, 110),
-                        (-99.15740125, -57.24855275, smallRadius), (-99.15740125, -57.24855275, smallRadius),
-                        (-99.15740125, -57.24855275, smallRadius), (-99.15740125, -57.24855275, smallRadius)]
-    rotateCircle4CCW = [(50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90),
-                        (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90), (50, 28.867513, 90),
-                        (50, 28.867513, smallRadius), (50, 28.867513, smallRadius),
-                        (50, 28.867513, smallRadius), (50, 28.867513, smallRadius)]
-    rotateCircle5CCW = [(0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110),
-                        (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110), (0, -57.735027, 110),
-                        (0, 114.4971045, smallRadius), (0, 114.4971045, smallRadius), (0, 114.4971045, smallRadius),
-                        (0, 114.4971045, smallRadius)]
-    rotateCircle6CCW = [(0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90),
-                        (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90), (0, -57.735027, 90),
-                        (0, -57.735027, smallRadius), (0, -57.735027, smallRadius),
-                        (0, -57.735027, smallRadius), (0, -57.735027, smallRadius)]
+    largeRadius = 75
+    rotateCircle1CCW = [(0, 28.867513, largeRadius), (0, 28.867513, largeRadius), (0, 28.867513, largeRadius),
+                        (0, 28.867513, largeRadius)]
+    rotateCircle2CCW = [(-25, -14.433757, largeRadius), (-25, -14.433757, largeRadius), (-25, -14.433757, largeRadius),
+                        (-25, -14.433757, largeRadius)]
+    rotateCircle3CCW = [(25, -14.433757, largeRadius), (25, -14.433757, largeRadius), (25, -14.433757, largeRadius),
+                        (25, -14.433757, largeRadius)]
 
-    return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW, rotateCircle6CCW]
+    return [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW]
 
 
 def ReturnCircleCoordsAndRadii():
-    majorCirclesCenters = [(-50, 28.867513), (-50, 28.867513), (50, 28.867513), (50, 28.867513), (0, -57.735027),
-                           (0, -57.735027)]
-    majorCirclesRadii = [110, 90, 110, 90, 110, 90]
+    largeRadius = 75
+    majorCirclesCenters = [(0, 28.867513), (-25, -14.433757), (25, -14.433757)]
+    majorCirclesRadii = [largeRadius, largeRadius, largeRadius]
     return majorCirclesCenters, majorCirclesRadii
