@@ -1,6 +1,7 @@
 import TwoMain
 from matplotlib import pyplot as plt
 import keyboard
+import pygame
 
 theCube = TwoMain.TheCube()
 
