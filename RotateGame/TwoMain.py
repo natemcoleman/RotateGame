@@ -1,7 +1,10 @@
 from matplotlib import pyplot as plt
+
 import math
 import numpy as np
 import random
+import pygame
+import pygame.gfxdraw
 
 
 class MovingPoint:
@@ -48,14 +51,309 @@ def PlotAllPoints(currAx, points, delayVal, plotPointNum):
     plt.show()
 
 
+def GetClosestLargeCircle(mouseX, mouseY):
+    pointPositions = ReturnPositions()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+    # Unpack the vector into separate lists for the first and second elements
+    first_elements, second_elements = zip(*pointPositions)
+    # Find maximum and minimum values for the first and second elements
+    max_first = max(first_elements)
+    min_first = min(first_elements)
+    max_second = max(second_elements)
+    min_second = min(second_elements)
+
+    rangeY = (max_second - min_second) + max(majorCirclesRadii) * 2
+    rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
+    scaleVal = 1
+
+    if screenWidth < screenHeight:
+        scaleVal = screenWidth / rangeX
+
+    else:
+        scaleVal = screenHeight / rangeY
+
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+
+    closest_circle_index = None
+    min_distance_to_edge = float('inf')
+
+    # print(mouseX, mouseY)
+
+    for i, (center_x, center_y) in enumerate(majorCirclesCenters):
+        distance_to_center = math.sqrt((mouseX - (screenWidth/2) - center_x*scaleVal) ** 2 + (mouseY - (screenHeight/2) - center_y*scaleVal) ** 2)
+        distance_to_edge = abs(distance_to_center - majorCirclesRadii[i]*scaleVal)
+
+        # print("Circle ", i+1, " distance: ", distance_to_edge)
+
+        # Update the closest circle if the current circle is closer
+        if distance_to_edge < min_distance_to_edge:
+            min_distance_to_edge = distance_to_edge
+            closest_circle_index = i
+
+    # print(closest_circle_index+1)
+
+    return closest_circle_index
+
+
+def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius, numPoints):
+    # theta1 = math.atan2(startPos[1]-circleCenter[1], startPos[0]-circleCenter[0])
+    # theta2 = math.atan2(endPos[1]-circleCenter[1], endPos[0]-circleCenter[0])
+
+    returnCoords = []
+    # equally_spaced_vector = np.linspace(theta1, theta2, numPoints)
+
+    # for i in range(len(equally_spaced_vector)):
+    #     returnCoords.append(pol2cart(circleRadius, equally_spaced_vector[i]))
+    xCoords = np.linspace(startPos[0], endPos[0], numPoints)
+    yCoords = np.linspace(startPos[1], endPos[1], numPoints)
+    for currIndex in range(numPoints):
+        returnCoords.append((xCoords[currIndex], yCoords[currIndex]))
+
+    return returnCoords
+
+
+def GetXYRotationCoords(points, rotationIndex, CW):
+    returnCoords = []
+    numPoints = 25
+
+    allMovements = ReturnCircleMovements()
+    movements = allMovements[rotationIndex]
+    pointPositions = ReturnPositions()
+
+    for pointIndex in range(len(points)):
+        currentPointVec = []
+        if any(pointIndex in my_tuple for my_tuple in movements):
+        # if pointIndex in movements: #does point move?
+        #     print("Point ", pointIndex, "moving")
+            # what is the end point
+            # what is the center rotation point for point
+            # what is radius of rotation
+            startPoint = pointPositions[points[pointIndex].positionIndex]
+
+            for move in movements:
+                if move[CW] == points[pointIndex].positionIndex:
+                    endPoint = pointPositions[move[not CW]]
+
+            # try:
+            #     index_of_tuple = next(index for index, my_tuple in enumerate(movements) if my_tuple[CW] == points[pointIndex].positionIndex)
+            #     endPoint = pointPositions[movements[index_of_tuple][not CW]]
+            # except StopIteration:
+            #     print("Stopped")
+            #     print(points[pointIndex].positionIndex)
+
+            centerRotation = (0, 0)
+            centerRadius = 100
+            # for move in movements:
+            #     if move[CW] == points[pointIndex].positionIndex:
+            #         endPoint = pointPositions[move[not CW]]
+            #         # print("endPoint:", endPoint)
+            #         if endPoint == ():
+            #             print("Empty")
+            #             print("move:", move)
+            #             print("pointPositions:", pointPositions)
+            #             print("pointPositions[move[not CW]]:", pointPositions[move[not CW]])
+            # print("startPoint:", startPoint, " endPoint:", endPoint)
+            currentPointVec = XYCoordinatesFromLocationChange(startPoint, endPoint, centerRotation, centerRadius, numPoints)
+        else:
+            for currInd in range(numPoints):
+                currentPointVec.append(pointPositions[points[pointIndex].positionIndex])
+        returnCoords.append(currentPointVec)
+
+    #get an array of xy coords for each point. points that do not move will all be the same
+    #points that do move will be equally spaced from angle start to finish
+
+    return returnCoords
+
+
+def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
+    # Clear the screen
+    white = (255, 255, 255)
+    screen.fill(white)
+    circle_radius = 10
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+
+    pointPositions = ReturnPositions()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+
+    # Unpack the vector into separate lists for the first and second elements
+    first_elements, second_elements = zip(*pointPositions)
+    # Find maximum and minimum values for the first and second elements
+    max_first = max(first_elements)
+    min_first = min(first_elements)
+    max_second = max(second_elements)
+    min_second = min(second_elements)
+
+    rangeY = (max_second - min_second) + max(majorCirclesRadii) * 2
+    rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
+    scaleVal = 1
+
+    if screenWidth < screenHeight:
+        scaleVal = screenWidth / rangeX
+
+    else:
+        scaleVal = screenHeight / rangeY
+
+    colors = ReturnColorsRBG()
+
+    font_size = 36
+    font_size_small = 12
+    font = pygame.font.Font(None, font_size)  # Use the default system font
+    # font2 = pygame.font.Font(None, font_size_small)
+    # text_color = (0, 0, 0)  # Black
+
+    # for i in range(len(majorCirclesCenters)):
+    #     pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + screenWidth / 2)),
+    #                             int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
+    #                             int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
+
+        # addDist = majorCirclesRadii[i] * 0.707
+        # if i < 2:
+        #     text_surface = font.render(str(i + 1), True, text_color)
+        #     text_x, text_y = (majorCirclesCenters[i][0] - addDist) * scaleVal + screenWidth / 2, (
+        #                 majorCirclesCenters[i][1] + addDist) * scaleVal + screenHeight / 2
+        # elif i < 4:
+        #     text_surface = font.render(str(i + 1), True, text_color)
+        #     text_x, text_y = (majorCirclesCenters[i][0] + addDist) * scaleVal + screenWidth / 2, (
+        #                 majorCirclesCenters[i][
+        #                     1] + addDist) * scaleVal + screenHeight / 2
+        # else:
+        #     text_surface = font.render(str(i + 1), True, text_color)
+        #     text_x, text_y = majorCirclesCenters[i][0] * scaleVal + screenWidth / 2, (majorCirclesCenters[i][
+        #                                                                                   1] - majorCirclesRadii[
+        #                                                                                   i]) * scaleVal + screenHeight / 2
+        # text_rect = text_surface.get_rect()
+        # text_rect.topleft = (text_x, text_y)
+        # screen.blit(text_surface, text_rect)
+
+    pointPositions = ReturnPositions()
+    for point in points:
+        pygame.draw.circle(screen, colors[point.color], (
+        int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
+        int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)), circle_radius * math.sqrt(scaleVal))
+        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2)),
+                                int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                                int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
+
+    xyCoords = GetXYRotationCoords(points, rotateIndex, CW)
+    # for coordIndex in range(len(xyCoords)):
+    #     print(xyCoords[coordIndex])
+    for frame in range(len(xyCoords[0])):
+        # print("frame:", frame)
+        screen.fill(white)
+        for i in range(len(majorCirclesCenters)):
+            pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + screenWidth / 2)),
+                                    int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
+                                    int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
+        for coordIndex in range(len(xyCoords)):
+            # print("coordIndex:", coordIndex)
+            pygame.draw.circle(screen, colors[points[coordIndex].color], (
+                int(xyCoords[coordIndex][frame][0] * scaleVal + screenWidth / 2),
+                int(xyCoords[coordIndex][frame][1] * scaleVal + screenHeight / 2)),
+                               circle_radius * math.sqrt(scaleVal))
+            pygame.gfxdraw.aacircle(screen, int((xyCoords[coordIndex][frame][0] * scaleVal + screenWidth / 2)),
+                                    int((xyCoords[coordIndex][frame][1] * scaleVal + screenHeight / 2)),
+                                    int(circle_radius * math.sqrt(scaleVal)), colors[points[coordIndex].color])
+        pygame.display.flip()
+        pygame.time.delay(10)
+
+
+def pol2cart(rho, phi):
+    x = rho * np.cos(phi)
+    y = rho * np.sin(phi)
+    return(x, y)
+
+
+def updateGameScreen(screen, points):
+    # Clear the screen
+    white = (255, 255, 255)
+    screen.fill(white)
+    circle_radius = 10
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+
+    pointPositions = ReturnPositions()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+
+    # Unpack the vector into separate lists for the first and second elements
+    first_elements, second_elements = zip(*pointPositions)
+    # Find maximum and minimum values for the first and second elements
+    max_first = max(first_elements)
+    min_first = min(first_elements)
+    max_second = max(second_elements)
+    min_second = min(second_elements)
+
+    rangeY = (max_second - min_second) + max(majorCirclesRadii)*2
+    rangeX = (max_first - min_first) + max(majorCirclesRadii)*2
+    scaleVal = 1
+
+    if screenWidth < screenHeight:
+        scaleVal = screenWidth/rangeX
+
+    else:
+        scaleVal = screenHeight/rangeY
+
+    colors = ReturnColorsRBG()
+
+    font_size = 36
+    font_size_small = 12
+    font = pygame.font.Font(None, font_size)  # Use the default system font
+    font2 = pygame.font.Font(None, font_size_small)
+    text_color = (0, 0, 0)  # Black
+
+    for i in range(len(majorCirclesCenters)):
+        pygame.gfxdraw.aacircle(screen,  int((majorCirclesCenters[i][0]*scaleVal + screenWidth/2)), int((majorCirclesCenters[i][1]*scaleVal + screenHeight/2)), int(majorCirclesRadii[i]*scaleVal), (0, 0, 0))
+        # pygame.draw.circle(screen, (0, 0, 0), (majorCirclesCenters[i][0] + screenWidth/2, majorCirclesCenters[i][1] + screenHeight/2), majorCirclesRadii[i], outlineWith)
+
+        addDist = majorCirclesRadii[i] * 0.707
+        if i < 2:
+            text_surface = font.render(str(i + 1), True, text_color)
+            text_x, text_y = (majorCirclesCenters[i][0] - addDist)*scaleVal + screenWidth/2, (majorCirclesCenters[i][1] + addDist)*scaleVal + screenHeight/2
+        elif i < 4:
+            text_surface = font.render(str(i + 1), True, text_color)
+            text_x, text_y = (majorCirclesCenters[i][0] + addDist)*scaleVal + screenWidth / 2, (majorCirclesCenters[i][
+                1] + addDist)*scaleVal + screenHeight / 2
+        else:
+            text_surface = font.render(str(i + 1), True, text_color)
+            text_x, text_y = majorCirclesCenters[i][0]*scaleVal + screenWidth / 2, (majorCirclesCenters[i][
+                1] - majorCirclesRadii[i])*scaleVal + screenHeight / 2
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (text_x, text_y)
+        screen.blit(text_surface, text_rect)
+
+    pointPositions = ReturnPositions()
+    counterNum = 0
+    for point in points:
+        pygame.draw.circle(screen, colors[point.color], (int(pointPositions[point.positionIndex][0]*scaleVal + screenWidth/2), int(pointPositions[point.positionIndex][1]*scaleVal + screenHeight/2)), circle_radius*math.sqrt(scaleVal))
+        pygame.gfxdraw.aacircle(screen,  int((pointPositions[point.positionIndex][0]*scaleVal + screenWidth/2)), int((pointPositions[point.positionIndex][1]*scaleVal + screenHeight/2)), int(circle_radius*math.sqrt(scaleVal)), colors[point.color])
+
+        # if True:
+        #     # currAx.text(pointPositions[point.positionIndex][0], pointPositions[point.positionIndex][1], str(counterNum),
+        #     #             verticalalignment='bottom', horizontalalignment='right')
+        #     text_surface = font2.render(str(counterNum), True, text_color)
+        #     text_x, text_y = pointPositions[point.positionIndex][0] + screenWidth / 2, pointPositions[point.positionIndex][1] + screenHeight / 2
+        #     text_rect = text_surface.get_rect()
+        #     text_rect.topleft = (text_x, text_y)
+        #     screen.blit(text_surface, text_rect)
+        counterNum += 1
+
+
 def ResetPoints(points):
     for pointIndex in range(len(points)):
         points[pointIndex].positionIndex = pointIndex
 
 
-def Rotate(points, circleNum, CW):
+def Rotate(screen, points, circleNum, CW):
     allMovements = ReturnCircleMovements()
     movements = allMovements[circleNum]
+
+    AnimatePos1ToPos2(screen, points, circleNum, CW)
+
     for move in movements:
         for point in points:
             if move[CW] == point.positionIndex and point.hasBeenMoved is False:
@@ -147,7 +445,7 @@ def ReturnCubeSidesBasedOnMainColor(maxFacesIndex):
     return returnFaces[maxFacesIndex]
 
 
-def SolveCube(points):
+def SolveCube(points, cubeMoves):
     # 0 - R = The right face
     # 1 - L = The left face
     # 2 - U = The top face
@@ -170,11 +468,15 @@ def SolveCube(points):
     numFacesSolved = 0
     # while not CheckIfFaceIsSolved(0, points) or not CheckIfFaceIsSolved(1, points):
     while not CheckIfFaceIsSolved(faceWithMaxColorIndex, points):
-        Rotate(points, random.randint(0, 5), random.randint(0, 1))
+        rotateInt = random.randint(0, 5)
+        randDir = random.randint(0, 1)
+        Rotate(points, rotateInt, randDir)
+        cubeMoves.append((rotateInt, randDir))
         nit += 1
     print(nit)
     print("Face ", faceWithMaxColorIndex, " is solved:", CheckIfFaceIsSolved(faceWithMaxColorIndex, points))
 
+    return cubeMoves
 
 def FullyRandomizeCube(points):
     newIndices = list(range(len(points)))
@@ -184,14 +486,19 @@ def FullyRandomizeCube(points):
         points[pointIndex].positionIndex = newIndices[pointIndex]
 
 
-def RandomizeCube(points, numRandomRotations):
+def RandomizeCube(points, numRandomRotations, cubeMoves):
     random_values = [random.randint(0, 5) for _ in range(numRandomRotations)]
     random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
 
     for randomIndex in range(numRandomRotations):
         Rotate(points, random_values[randomIndex], random_bools[randomIndex])
-        print("Circle:", random_values[randomIndex]+1, " CW:", random_bools[randomIndex])
+        cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
+        if random_bools[randomIndex]:
+            print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
+        else:
+            print("Rotated circle", random_values[randomIndex] + 1, "Counter-Clockwise")
 
+    return cubeMoves
 
 def ReturnFaces():
     face1 = [0, 1, 2, 3]
@@ -214,6 +521,11 @@ def ReturnPositions():
 
 def ReturnColors():
     return ['#b80a31', '#0044af', '#009c46', 'm', '#ffd600', '#ff5700']
+
+
+def ReturnColorsRBG():
+    return [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
+
 
 
 def CreateAllPoints():
