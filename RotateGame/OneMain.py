@@ -18,6 +18,7 @@ class TheCube:
 
 
 def GetClosestLargeCircle(mouseX, mouseY):
+    offset = 0.75
     pointPositions = ReturnPositions()
     majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
 
@@ -35,8 +36,8 @@ def GetClosestLargeCircle(mouseX, mouseY):
     rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
     scaleVal = 1
 
-    if screenWidth < screenHeight:
-        scaleVal = screenWidth / rangeX
+    if screenWidth/2 < screenHeight:
+        scaleVal = (screenWidth/2) / rangeX
 
     else:
         scaleVal = screenHeight / rangeY
@@ -49,7 +50,7 @@ def GetClosestLargeCircle(mouseX, mouseY):
     min_distance_to_edge = float('inf')
 
     for i, (center_x, center_y) in enumerate(majorCirclesCenters):
-        distance_to_center = math.sqrt((mouseX - (screenWidth / 2) - center_x * scaleVal) ** 2 + (
+        distance_to_center = math.sqrt((mouseX - (screenWidth * offset) - center_x * scaleVal) ** 2 + (
                 mouseY - (screenHeight / 2) - center_y * scaleVal) ** 2)
         distance_to_edge = abs(distance_to_center - majorCirclesRadii[i] * scaleVal)
 
@@ -130,10 +131,11 @@ def GetXYRotationCoords(points, rotationIndex, CCW):
     return returnCoords
 
 
-def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
+def AnimatePos1ToPos2(screen, points, rotateIndex, CW, solutionVec, offset):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
+    # offset = 0.75
     circle_radius = 20
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
@@ -153,14 +155,14 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
     rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
     scaleVal = 1
 
-    if screenWidth < screenHeight:
-        scaleVal = screenWidth / rangeX
+    if screenWidth/2 < screenHeight:
+        scaleVal = (screenWidth/2) / rangeX
 
     else:
         scaleVal = screenHeight / rangeY
 
     colors = ReturnColorsRBG()
-
+    DrawSolution(screen, solutionVec)
     font_size = 36
     font_size_small = 12
     font = pygame.font.Font(None, font_size)  # Use the default system font
@@ -197,7 +199,7 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
             int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
             int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
                            circle_radius * math.sqrt(scaleVal))
-        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2)),
+        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + (screenWidth*offset))),
                                 int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
                                 int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
 
@@ -207,18 +209,20 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
         # print("frame:", frame)
         screen.fill(white)
         for i in range(len(majorCirclesCenters)):
-            pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + screenWidth / 2)),
+            pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + (screenWidth*offset))),
                                     int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
                                     int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
         for coordIndex in range(len(xyCoords)):
             # print("coordIndex:", coordIndex)
             pygame.draw.circle(screen, colors[points[coordIndex].color], (
-                int(xyCoords[coordIndex][frame][0] * scaleVal + screenWidth / 2),
+                int(xyCoords[coordIndex][frame][0] * scaleVal + (screenWidth*offset)),
                 int(xyCoords[coordIndex][frame][1] * scaleVal + screenHeight / 2)),
                                circle_radius * math.sqrt(scaleVal))
-            pygame.gfxdraw.aacircle(screen, int((xyCoords[coordIndex][frame][0] * scaleVal + screenWidth / 2)),
+            pygame.gfxdraw.aacircle(screen, int((xyCoords[coordIndex][frame][0] * scaleVal + (screenWidth*offset))),
                                     int((xyCoords[coordIndex][frame][1] * scaleVal + screenHeight / 2)),
                                     int(circle_radius * math.sqrt(scaleVal)), colors[points[coordIndex].color])
+        if offset > 0.25:
+            DrawSolution(screen, solutionVec)
         pygame.display.flip()
         pygame.time.delay(10)
 
@@ -229,11 +233,12 @@ def pol2cart(rho, phi):
     return x, y
 
 
-def updateGameScreen(screen, points):
+def updateGameScreen(screen, points, solutionVec):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
     circle_radius = 20
+    offset = 0.75 #percent distance from edge
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
 
@@ -252,8 +257,8 @@ def updateGameScreen(screen, points):
     rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
     scaleVal = 1
 
-    if screenWidth < screenHeight:
-        scaleVal = screenWidth / rangeX
+    if screenWidth/2 < screenHeight:
+        scaleVal = (screenWidth/2) / rangeX
 
     else:
         scaleVal = screenHeight / rangeY
@@ -267,7 +272,7 @@ def updateGameScreen(screen, points):
     text_color = (0, 0, 0)  # Black
 
     for i in range(len(majorCirclesCenters)):
-        pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + screenWidth / 2)),
+        pygame.gfxdraw.aacircle(screen, int(((majorCirclesCenters[i][0] * scaleVal) + (screenWidth*offset))),
                                 int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
                                 int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
         # pygame.draw.circle(screen, (0, 0, 0), (majorCirclesCenters[i][0] + screenWidth/2, majorCirclesCenters[i][1] + screenHeight/2), majorCirclesRadii[i], outlineWith)
@@ -290,13 +295,12 @@ def updateGameScreen(screen, points):
 
     pointPositions = ReturnPositions()
     counterNum = 0
-    pointPositions
     for point in points:
         pygame.draw.circle(screen, colors[point.color], (
-            int(pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2),
+            int(pointPositions[point.positionIndex][0] * scaleVal + (screenWidth*offset)),
             int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
                            circle_radius * math.sqrt(scaleVal))
-        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + screenWidth / 2)),
+        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + (screenWidth*offset))),
                                 int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
                                 int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
 
@@ -309,6 +313,56 @@ def updateGameScreen(screen, points):
         #     text_rect.topleft = (text_x, text_y)
         #     screen.blit(text_surface, text_rect)
         counterNum += 1
+    DrawSolution(screen, solutionVec)
+
+
+def DrawSolution(screen, solutionVec):
+    tempPoints = CreateAllPoints()
+    for pointIndex in range(len(tempPoints)):
+        tempPoints[pointIndex].positionIndex = solutionVec[pointIndex]
+
+    circle_radius = 20
+    offset = 0.25  # percent distance from edge
+    screenWidth = pygame.display.Info().current_w
+    screenHeight = pygame.display.Info().current_h
+
+    pointPositions = ReturnPositions()
+    majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
+
+    # Unpack the vector into separate lists for the first and second elements
+    first_elements, second_elements = zip(*pointPositions)
+    # Find maximum and minimum values for the first and second elements
+    max_first = max(first_elements)
+    min_first = min(first_elements)
+    max_second = max(second_elements)
+    min_second = min(second_elements)
+
+    rangeY = (max_second - min_second) + max(majorCirclesRadii) * 2
+    rangeX = (max_first - min_first) + max(majorCirclesRadii) * 2
+    scaleVal = 1
+
+    if screenWidth/2 < screenHeight:
+        scaleVal = (screenWidth/2) / rangeX
+
+    else:
+        scaleVal = screenHeight / rangeY
+
+    colors = ReturnColorsRBG()
+
+    for i in range(len(majorCirclesCenters)):
+        pygame.gfxdraw.aacircle(screen, int((majorCirclesCenters[i][0] * scaleVal + (screenWidth*offset))),
+                                int((majorCirclesCenters[i][1] * scaleVal + screenHeight / 2)),
+                                int(majorCirclesRadii[i] * scaleVal), (0, 0, 0))
+
+    pointPositions = ReturnPositions()
+    for point in tempPoints:
+        pygame.draw.circle(screen, colors[point.color], (
+            int(pointPositions[point.positionIndex][0] * scaleVal + (screenWidth*offset)),
+            int(pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                           circle_radius * math.sqrt(scaleVal))
+        pygame.gfxdraw.aacircle(screen, int((pointPositions[point.positionIndex][0] * scaleVal + (screenWidth*offset))),
+                                int((pointPositions[point.positionIndex][1] * scaleVal + screenHeight / 2)),
+                                int(circle_radius * math.sqrt(scaleVal)), colors[point.color])
 
 
 def ResetPoints(points):
@@ -316,11 +370,11 @@ def ResetPoints(points):
         points[pointIndex].positionIndex = pointIndex
 
 
-def Rotate(screen, points, circleNum, CW):
+def Rotate(screen, points, circleNum, CW, solutionVec, offsetVal):
     allMovements = ReturnCircleMovements()
     movements = allMovements[circleNum]
 
-    AnimatePos1ToPos2(screen, points, circleNum, CW)
+    AnimatePos1ToPos2(screen, points, circleNum, CW, solutionVec, offsetVal)
 
     for move in movements:
         for point in points:
@@ -350,10 +404,6 @@ def CheckIfFaceIsSolved(faceIndex, points):
 def CheckIfSolved(points, correctOrder):
     solved = True
 
-    # for i in range(6):
-    #     faceSolvedBool = CheckIfFaceIsSolved(i, points)
-    #     if not faceSolvedBool:
-    #         return False
     for checkIndex in range(len(points)):
         if points[checkIndex].positionIndex != correctOrder[checkIndex]:
             return False
@@ -362,11 +412,30 @@ def CheckIfSolved(points, correctOrder):
     return solved
 
 
-def CreateRandomOrder(points):
-    newIndices = list(range(len(points)))
-    random.shuffle(newIndices)
+def CreateRandomOrder(screen):
+    tempPoints = CreateAllPoints()
 
-    return newIndices
+    numRandomRotations = 15
+    offsetVal = 0.25
+
+    random_values = [random.randint(0, 2) for _ in range(numRandomRotations)]
+    random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
+
+    for randomIndex in range(numRandomRotations):
+        solutionVec = []
+        for pointIndex in range(len(tempPoints)):
+            solutionVec.append(tempPoints[pointIndex].positionIndex)
+
+        Rotate(screen, tempPoints, random_values[randomIndex], random_bools[randomIndex], solutionVec, offsetVal)
+
+    solutionVec = []
+    for pointIndex in range(len(tempPoints)):
+        solutionVec.append(tempPoints[pointIndex].positionIndex)
+
+    # newIndices = list(range(len(tempPoints)))
+    # random.shuffle(newIndices)
+
+    return solutionVec
 
 
 def ShowSolution(solutionScreen, correctOrder):
@@ -423,6 +492,7 @@ def ShowSolution(solutionScreen, correctOrder):
         counterNum += 1
     pygame.display.flip()
 
+
 def FindFaceWithMaxSameColor(points):
     faces = ReturnFaces()
     maxColorsOnFace = 0
@@ -477,7 +547,7 @@ def ReturnCubeSidesBasedOnMainColor(maxFacesIndex):
     return returnFaces[maxFacesIndex]
 
 
-def SolveCube(screen, points, cubeMoves):  # BAD
+def SolveCube(screen, points, cubeMoves, solutionVec):  # BAD
     # 0 - R = The right face
     # 1 - L = The left face
     # 2 - U = The top face
@@ -502,7 +572,7 @@ def SolveCube(screen, points, cubeMoves):  # BAD
     while not CheckIfFaceIsSolved(faceWithMaxColorIndex, points):
         rotateInt = random.randint(0, 5)
         randDir = random.randint(0, 1)
-        Rotate(screen, points, rotateInt, randDir)
+        Rotate(screen, points, rotateInt, randDir, solutionVec)
         cubeMoves.append((rotateInt, randDir))
         nit += 1
     print(nit)
@@ -519,12 +589,12 @@ def FullyRandomizeCube(points):
         points[pointIndex].positionIndex = newIndices[pointIndex]
 
 
-def RandomizeCube(screen, points, numRandomRotations, cubeMoves):
+def RandomizeCube(screen, points, numRandomRotations, cubeMoves, solutionVec):
     random_values = [random.randint(0, 2) for _ in range(numRandomRotations)]
     random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
 
     for randomIndex in range(numRandomRotations):
-        Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex])
+        Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex], solutionVec)
         cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
         # if random_bools[randomIndex]:
         #     print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
@@ -578,7 +648,6 @@ def ReturnCircleMovements():
 
 
 def ReturnCircleMovementRotations():
-    smallRadius = -10
     largeRadius = 75
     rotateCircle1CCW = [(0, 28.867513, largeRadius), (0, 28.867513, largeRadius), (0, 28.867513, largeRadius),
                         (0, 28.867513, largeRadius)]
