@@ -314,6 +314,17 @@ def updateGameScreen(screen, points, solutionVec):
         #     screen.blit(text_surface, text_rect)
         counterNum += 1
     DrawSolution(screen, solutionVec)
+    if CheckIfSolved(screen, points, solutionVec):
+        font_size = 48
+        font = pygame.font.Font(None, font_size)  # Use the default system font
+        text_color = (0, 0, 0)  # Black
+
+        text_surface = font.render("SOLVED", True, text_color)
+        text_x = pygame.display.Info().current_w * 0.3
+        text_y = 25
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (text_x, text_y)
+        screen.blit(text_surface, text_rect)
 
 
 def DrawSolution(screen, solutionVec):
@@ -401,21 +412,21 @@ def CheckIfFaceIsSolved(faceIndex, points):
     return solved
 
 
-def CheckIfSolved(points, correctOrder):
+def CheckIfSolved(screen, points, correctOrder):
     solved = True
 
     for checkIndex in range(len(points)):
         if points[checkIndex].positionIndex != correctOrder[checkIndex]:
             return False
 
-    print("SOLVED!")
+    # print("SOLVED!")
     return solved
 
 
 def CreateRandomOrder(screen):
     tempPoints = CreateAllPoints()
 
-    numRandomRotations = 15
+    numRandomRotations = 5
     offsetVal = 0.25
 
     random_values = [random.randint(0, 2) for _ in range(numRandomRotations)]
@@ -592,9 +603,10 @@ def FullyRandomizeCube(points):
 def RandomizeCube(screen, points, numRandomRotations, cubeMoves, solutionVec):
     random_values = [random.randint(0, 2) for _ in range(numRandomRotations)]
     random_bools = [random.choice([True, False]) for _ in range(numRandomRotations)]
+    offsetVal = 0.75
 
     for randomIndex in range(numRandomRotations):
-        Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex], solutionVec)
+        Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex], solutionVec, offsetVal)
         cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
         # if random_bools[randomIndex]:
         #     print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")

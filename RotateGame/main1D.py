@@ -10,7 +10,7 @@ solutionScreen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 pygame.display.set_caption("2D Rubiks Cube")
 
 randomOrder = OneMain.CreateRandomOrder(solutionScreen)
-print(randomOrder)
+# print(randomOrder)
 OneMain.ShowSolution(solutionScreen, randomOrder)
 
 
@@ -41,19 +41,21 @@ while running:
             # else:
             #     print("Rotated circle", rotateCircleIndex + 1, "Counter-Clockwise")
 
-            OneMain.CheckIfSolved(theCube.points, randomOrder)
+            OneMain.CheckIfSolved(screen, theCube.points, randomOrder)
 
         elif event.type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_r]:
-                OneMain.ResetPoints(theCube.points)
+                # OneMain.ResetPoints(theCube.points)
                 moves = []
+                randomOrder = OneMain.CreateRandomOrder(solutionScreen)
+
 
             elif pygame.key.get_pressed()[pygame.K_x]:
                 numRandomRotations = 3
                 moves = OneMain.RandomizeCube(screen, theCube.points, numRandomRotations, moves, randomOrder)
-            elif pygame.key.get_pressed()[pygame.K_v]:
-                moves = []
-                OneMain.FullyRandomizeCube(theCube.points)
+            # elif pygame.key.get_pressed()[pygame.K_v]:
+            #     moves = []
+            #     OneMain.FullyRandomizeCube(theCube.points)
 
             elif pygame.key.get_pressed()[pygame.K_a]:
                 moves = OneMain.SolveCube(screen, theCube.points, moves, randomOrder)
@@ -62,7 +64,7 @@ while running:
                 if len(moves) > 0:
                     OneMain.Rotate(screen, theCube.points, moves[len(moves)-1][0], not moves[len(moves)-1][1], randomOrder, 0.75)
                     moves.pop()
-                    OneMain.CheckIfSolved(theCube.points, randomOrder)
+                    OneMain.CheckIfSolved(screen, theCube.points, randomOrder)
 
     OneMain.updateGameScreen(screen, theCube.points, randomOrder)
     # Update display

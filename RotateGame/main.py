@@ -43,11 +43,11 @@ while running:
                 numRandomRotations = 3
                 moves = TwoMain.RandomizeCube(screen, theCube.points, numRandomRotations, moves)
 
-            elif pygame.key.get_pressed()[pygame.K_v]:
-                TwoMain.FullyRandomizeCube(theCube.points)
+            # elif pygame.key.get_pressed()[pygame.K_v]:
+            #     TwoMain.FullyRandomizeCube(theCube.points)
 
-            elif pygame.key.get_pressed()[pygame.K_a]:
-                moves = TwoMain.SolveCube(screen, theCube.points, moves)
+            # elif pygame.key.get_pressed()[pygame.K_a]:
+            #     moves = TwoMain.SolveCube(screen, theCube.points, moves)
 
             elif pygame.key.get_pressed()[pygame.K_z]:
                 if len(moves) > 0:
