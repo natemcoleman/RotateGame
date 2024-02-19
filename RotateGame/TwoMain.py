@@ -62,7 +62,7 @@ def GetClosestLargeCircle(mouseX, mouseY):
 
 
 def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius, numPoints, CCW):
-    if CCW:
+    if CCW and circleRadius > 0:
         tempPoint = startPos
         startPos = endPos
         endPos = tempPoint
@@ -134,7 +134,7 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
-    circle_radius = 10
+    circle_radius = 12
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
 
@@ -233,7 +233,7 @@ def updateGameScreen(screen, points):
     # Clear the screen
     white = (255, 255, 255)
     screen.fill(white)
-    circle_radius = 10
+    circle_radius = 12
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
 
@@ -308,6 +308,18 @@ def updateGameScreen(screen, points):
         #     screen.blit(text_surface, text_rect)
         counterNum += 1
 
+    if CheckIfSolved(points):
+        font_size = 48
+        font = pygame.font.Font(None, font_size)  # Use the default system font
+        text_color = (0, 0, 0)  # Black
+
+        text_surface = font.render("SOLVED!", True, text_color)
+        text_x = (pygame.display.Info().current_w - text_surface.get_width()) // 2
+        text_y = 25
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (text_x, text_y)
+        screen.blit(text_surface, text_rect)
+
 
 def ResetPoints(points):
     for pointIndex in range(len(points)):
@@ -353,7 +365,7 @@ def CheckIfSolved(points):
         if not faceSolvedBool:
             return False
 
-    print("SOLVED!")
+    # print("SOLVED!")
     return solved
 
 
@@ -460,10 +472,10 @@ def RandomizeCube(screen, points, numRandomRotations, cubeMoves):
     for randomIndex in range(numRandomRotations):
         Rotate(screen, points, random_values[randomIndex], random_bools[randomIndex])
         cubeMoves.append((random_values[randomIndex], random_bools[randomIndex]))
-        if random_bools[randomIndex]:
-            print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
-        else:
-            print("Rotated circle", random_values[randomIndex] + 1, "Counter-Clockwise")
+        # if random_bools[randomIndex]:
+        #     print("Rotated circle", random_values[randomIndex] + 1, "Clockwise")
+        # else:
+        #     print("Rotated circle", random_values[randomIndex] + 1, "Counter-Clockwise")
 
     return cubeMoves
 

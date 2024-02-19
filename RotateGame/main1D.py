@@ -13,7 +13,6 @@ randomOrder = OneMain.CreateRandomOrder(solutionScreen)
 # print(randomOrder)
 OneMain.ShowSolution(solutionScreen, randomOrder)
 
-
 moves = []
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
@@ -41,14 +40,13 @@ while running:
             # else:
             #     print("Rotated circle", rotateCircleIndex + 1, "Counter-Clockwise")
 
-            OneMain.CheckIfSolved(screen, theCube.points, randomOrder)
+            OneMain.CheckIfSolved(theCube.points, randomOrder)
 
         elif event.type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_r]:
                 # OneMain.ResetPoints(theCube.points)
                 moves = []
                 randomOrder = OneMain.CreateRandomOrder(solutionScreen)
-
 
             elif pygame.key.get_pressed()[pygame.K_x]:
                 numRandomRotations = 3
@@ -64,7 +62,7 @@ while running:
                 if len(moves) > 0:
                     OneMain.Rotate(screen, theCube.points, moves[len(moves)-1][0], not moves[len(moves)-1][1], randomOrder, 0.75)
                     moves.pop()
-                    OneMain.CheckIfSolved(screen, theCube.points, randomOrder)
+                    OneMain.CheckIfSolved(theCube.points, randomOrder)
 
     OneMain.updateGameScreen(screen, theCube.points, randomOrder)
     # Update display
@@ -72,11 +70,3 @@ while running:
 
 # Quit Pygame
 pygame.quit()
-
-
-
-
-
-
-
-

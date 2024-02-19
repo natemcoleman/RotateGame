@@ -27,10 +27,10 @@ while running:
             rotateCircleIndex = TwoMain.GetClosestLargeCircle(mouse_x, mouse_y)
             moves.append((rotateCircleIndex, keys[pygame.K_SPACE]))
             TwoMain.Rotate(screen, theCube.points, rotateCircleIndex, keys[pygame.K_SPACE])
-            if keys[pygame.K_SPACE]:
-                print("Rotated circle", rotateCircleIndex + 1, "Clockwise")
-            else:
-                print("Rotated circle", rotateCircleIndex + 1, "Counter-Clockwise")
+            # if keys[pygame.K_SPACE]:
+            #     print("Rotated circle", rotateCircleIndex + 1, "Clockwise")
+            # else:
+            #     print("Rotated circle", rotateCircleIndex + 1, "Counter-Clockwise")
 
             TwoMain.CheckIfSolved(theCube.points)
 
