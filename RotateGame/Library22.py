@@ -42,6 +42,8 @@ def GetClosestLargeCircle(mouseX, mouseY):
     else:
         scaleVal = screenHeight / rangeY
 
+    scaleVal *= 0.9
+
     majorCirclesCenters, majorCirclesRadii = ReturnCircleCoordsAndRadii()
     screenWidth = pygame.display.Info().current_w
     screenHeight = pygame.display.Info().current_h
@@ -71,8 +73,11 @@ def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius
     theta1 = math.atan2(startPos[1] - circleCenter[1], startPos[0] - circleCenter[0])
     theta2 = math.atan2(endPos[1] - circleCenter[1], endPos[0] - circleCenter[0])
 
-    if theta2 < 0 < theta1:
-        theta1 -= 2 * math.pi
+    # if theta2 < 0 < theta1:
+    #     theta1 -= 2 * math.pi
+    #
+    if theta1 < 0 < theta2:
+        theta2 -= 2 * math.pi
 
     returnCoords = []
 
@@ -163,6 +168,8 @@ def AnimatePos1ToPos2(screen, points, rotateIndex, CW, solutionVec, offset):
 
     if offset <=0.25:
         scaleVal *= 0.75
+
+    scaleVal *= 0.9
 
     colors = ReturnColorsRBG()
     DrawSolution(screen, solutionVec)
@@ -267,6 +274,8 @@ def updateGameScreen(screen, points, solutionVec):
     else:
         scaleVal = screenHeight / rangeY
 
+    scaleVal *= 0.9
+
     colors = ReturnColorsRBG()
 
     # font_size = 36
@@ -364,6 +373,8 @@ def DrawSolution(screen, solutionVec):
         scaleVal = screenHeight / rangeY
 
     scaleVal *= 0.75
+
+    scaleVal *= 0.9
 
     colors = ReturnColorsRBG()
 
