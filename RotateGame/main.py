@@ -11,17 +11,15 @@ solutionScreen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 pygame.display.set_caption("2D Rubiks Cube")
 
 randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen)
-# print(randomOrder)
 RotateLibrary.ShowSolution(solutionCube, solutionScreen, randomOrder)
 
 moves = []
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-pygame.display.set_caption("2D Rubiks Cube")
 
 # Enable OpenGL acceleration for smoother rendering
-pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
-pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
+# pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
+# pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
 
 # Game loop
 running = True
@@ -46,9 +44,6 @@ while running:
             elif pygame.key.get_pressed()[pygame.K_x]:
                 numRandomRotations = 3
                 moves = RotateLibrary.RandomizeCube(screen, theCube, numRandomRotations, moves, randomOrder)
-            # elif pygame.key.get_pressed()[pygame.K_v]:
-            #     moves = []
-            #     RotateLibrary.FullyRandomizeCube(theCube.points)
 
             elif pygame.key.get_pressed()[pygame.K_a]:
                 moves = RotateLibrary.SolveCube(screen, theCube, moves, randomOrder)
@@ -58,7 +53,7 @@ while running:
                     RotateLibrary.Rotate(screen, theCube, moves[len(moves)-1][0], not moves[len(moves)-1][1], randomOrder, 0.75)
                     moves.pop()
                     RotateLibrary.CheckIfSolved(theCube, randomOrder)
-    RotateLibrary.updateGameScreen(screen, theCube, randomOrder) #resetting here, BAD
+    RotateLibrary.updateGameScreen(screen, theCube, randomOrder) 
     # Update display
     pygame.display.flip()
 
