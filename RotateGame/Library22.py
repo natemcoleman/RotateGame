@@ -73,9 +73,6 @@ def XYCoordinatesFromLocationChange(startPos, endPos, circleCenter, circleRadius
     theta1 = math.atan2(startPos[1] - circleCenter[1], startPos[0] - circleCenter[0])
     theta2 = math.atan2(endPos[1] - circleCenter[1], endPos[0] - circleCenter[0])
 
-    # if theta2 < 0 < theta1:
-    #     theta1 -= 2 * math.pi
-    #
     if theta1 < 0 < theta2:
         theta2 -= 2 * math.pi
 
