@@ -3,7 +3,7 @@ import pygame
 
 pygame.init()
 
-theCube = RotateLibrary.TheCube(22)
+theCube = RotateLibrary.TheCube(41)
 numRandomRotationsForSolution = 5
 width, height = 800, 600
 numRandomRotationsShuffle = 3

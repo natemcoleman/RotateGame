@@ -290,6 +290,64 @@ class Type32:
         self.circleCoordsAndRadii = majorCirclesCenters, majorCirclesRadii
 
 
+class Type41:
+    def __init__(self):
+        self.circleRadius = 12
+        self.numFrames = 50
+        self.animationType = 1
+        face1 = [0, 4, 8, 12]
+        face2 = [1, 2, 10, 11]
+        face3 = [3, 6, 7, 9]
+
+        self.faces = [face1, face2, face3]
+
+        self.positions = [(0, 68.30127), (-25, 25), (25, 25), (0, 18.30127), (-68.30127, 0), (-18.30127, 0), (18.30127, 0), (68.30127, 0), (0, -18.30127), (-25, -25), (25, -25), (0, -68.30127)]
+
+        self.colors = [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
+
+        red1 = MovingPoint(0, 0)
+        red2 = MovingPoint(4, 0)
+        red3 = MovingPoint(7, 0)
+        red4 = MovingPoint(11, 0)
+
+        blue1 = MovingPoint(1, 1)
+        blue2 = MovingPoint(2, 1)
+        blue3 = MovingPoint(9, 1)
+        blue4 = MovingPoint(10, 1)
+
+        yellow1 = MovingPoint(3, 2)
+        yellow2 = MovingPoint(5, 2)
+        yellow3 = MovingPoint(6, 2)
+        yellow4 = MovingPoint(8, 2)
+
+        self.points = [red1, red2, red3, red4, blue1, blue2, blue3, blue4, yellow1, yellow2, yellow3, yellow4]
+
+        rotateCircle1CCW = [(0, 2), (2, 6), (6, 8), (8, 9), (9, 4), (4, 0)]
+        rotateCircle2CCW = [(0, 7), (7, 10), (10, 8), (8, 5), (5, 1), (1, 0)]
+        rotateCircle3CCW = [(1, 3), (3, 6), (6, 10), (10, 11), (11, 4), (4, 1)]
+        rotateCircle4CCW = [(2, 7), (7, 11), (11, 9), (9, 5), (5, 3), (3, 2)]
+        rotateCircle5CCW = [(0, 7), (7, 11), (11, 4), (4, 0)]
+
+        self.circleMovements = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW]
+
+        mediumRadius = 75 / 2
+        largeRadius = 136.60254 / 2
+        smallRadius = 100 / 2
+        rotateCircle1CCW = [(-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius)]
+        rotateCircle2CCW = [(25, 25, smallRadius), (25, 25, smallRadius), (25, 25, smallRadius), (25, 25, smallRadius), (25, 25, smallRadius), (25, 25, smallRadius)]
+        rotateCircle3CCW = [(-25, -25, smallRadius), (-25, -25, smallRadius), (-25, -25, smallRadius), (-25, -25, smallRadius), (-25, -25, smallRadius), (-25, -25, smallRadius)]
+        rotateCircle4CCW = [(25, -25, smallRadius), (25, -25, smallRadius), (25, -25, smallRadius), (25, -25, smallRadius), (25, -25, smallRadius), (25, -25, smallRadius)]
+        rotateCircle5CCW = [(0, 0, largeRadius), (0, 0, largeRadius), (0, 0, largeRadius), (0, 0, largeRadius)]
+
+        self.circleMovementRotations = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW]
+
+        majorCirclesCenters = [(-25, 25), (25, 25), (-25, -25), (25, -25), (0, 0)]
+        majorCirclesRadii = [smallRadius, smallRadius, smallRadius, smallRadius, largeRadius]
+        self.circleCoordsAndRadii = majorCirclesCenters, majorCirclesRadii
+
+
+
+
 class MovingPoint:
     def __init__(self, initPositionIndex, initColor):
         self.positionIndex = initPositionIndex
@@ -306,6 +364,8 @@ class TheCube:
             self.configuration = Type31()
         elif typeNum == 32:
             self.configuration = Type32()
+        elif typeNum == 41:
+            self.configuration = Type41()
         else:
             self.configuration = Type22()
 
@@ -313,7 +373,6 @@ class TheCube:
 def GetClosestLargeCircle(currentCube, mouseX, mouseY):
     offset = 0.75
     scaleVal = ReturnScaleVal(currentCube)
-    scaleVal *= 0.9
 
     majorCirclesCenters, majorCirclesRadii = currentCube.configuration.circleCoordsAndRadii
     screenWidth = pygame.display.Info().current_w
