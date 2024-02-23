@@ -3,14 +3,15 @@ import pygame
 
 pygame.init()
 
-theCube = RotateLibrary.TheCube()
-solutionCube = RotateLibrary.TheCube()
+theCube = RotateLibrary.TheCube(32)
+solutionCube = RotateLibrary.TheCube(theCube.typeNum)
 
 width, height = 800, 600
 solutionScreen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 pygame.display.set_caption("2D Rubiks Cube")
 
-randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen)
+numRandomRotations = 5
+randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen, numRandomRotations)
 RotateLibrary.ShowSolution(solutionCube, solutionScreen, randomOrder)
 
 moves = []
@@ -39,11 +40,11 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_r]:
                 moves = []
-                randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen)
+                randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen, numRandomRotations)
 
             elif pygame.key.get_pressed()[pygame.K_x]:
-                numRandomRotations = 3
-                moves = RotateLibrary.RandomizeCube(screen, theCube, numRandomRotations, moves, randomOrder)
+                numRandomRotations2 = 3
+                moves = RotateLibrary.RandomizeCube(screen, theCube, numRandomRotations2, moves, randomOrder)
 
             elif pygame.key.get_pressed()[pygame.K_a]:
                 moves = RotateLibrary.SolveCube(screen, theCube, moves, randomOrder)
