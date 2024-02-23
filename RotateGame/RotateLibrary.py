@@ -16,7 +16,7 @@ class Type22:
         face6 = [5, 7]
         self.faces = [face1, face2, face5, face6]
         self.positions = [(0, 45.825757), (-13.671875, 36.962208), (13.671875, 36.962208), (0, 31.721444), (0, -31.721444),
-                    (-13.671875, -36.962208), (13.671875, -36.962208), (0, -45.825757)]
+                          (-13.671875, -36.962208), (13.671875, -36.962208), (0, -45.825757)]
         self.colors = [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
 
         red1 = MovingPoint(0, 0)
@@ -39,13 +39,13 @@ class Type22:
         mediumRadius = 75 / 2
         largeRadius = 100 / 2
         rotateCircle1CCW = [(-20, 0, largeRadius), (-20, 0, largeRadius), (-20, 0, largeRadius),
-                                (-20, 0, largeRadius), (-20, 0, largeRadius), (-20, 0, largeRadius)]
+                            (-20, 0, largeRadius), (-20, 0, largeRadius), (-20, 0, largeRadius)]
         rotateCircle2CCW = [(-20, 0, mediumRadius), (-20, 0, mediumRadius), (-20, 0, mediumRadius),
-                                (-20, 0, mediumRadius), (-20, 0, mediumRadius), (-20, 0, mediumRadius)]
+                            (-20, 0, mediumRadius), (-20, 0, mediumRadius), (-20, 0, mediumRadius)]
         rotateCircle4CCW = [(20, 0, largeRadius), (20, 0, largeRadius), (20, 0, largeRadius), (20, 0, largeRadius),
-                                (20, 0, largeRadius), (20, 0, largeRadius)]
+                            (20, 0, largeRadius), (20, 0, largeRadius)]
         rotateCircle5CCW = [(20, 0, mediumRadius), (20, 0, mediumRadius), (20, 0, mediumRadius),
-                                (20, 0, mediumRadius), (20, 0, mediumRadius), (20, 0, mediumRadius)]
+                            (20, 0, mediumRadius), (20, 0, mediumRadius), (20, 0, mediumRadius)]
 
         self.circleMovementRotations = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle4CCW, rotateCircle5CCW]
 
@@ -96,7 +96,7 @@ class Type23:
         cyan3 = MovingPoint(17, 5)
 
         self.points = [red1, red2, red3, blue1, blue2, blue3, green1, green2, green3, purple1, purple2,
-                purple3, yellow1, yellow2, yellow3, cyan1, cyan2, cyan3]
+                       purple3, yellow1, yellow2, yellow3, cyan1, cyan2, cyan3]
 
         rotateCircle1CCW = [(0, 2), (2, 5), (5, 13), (13, 16), (16, 17), (17, 0)]
         rotateCircle2CCW = [(1, 3), (3, 7), (7, 11), (11, 14), (14, 15), (15, 1)]
@@ -106,7 +106,7 @@ class Type23:
         rotateCircle6CCW = [(5, 13), (13, 11), (11, 9), (9, 8), (8, 7), (7, 5)]
 
         self.circleMovements = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW,
-                rotateCircle6CCW]
+                                rotateCircle6CCW]
 
         mediumRadius = 75 / 2
         largeRadius = 100 / 2
@@ -125,7 +125,7 @@ class Type23:
                             (20, 0, smallRadius), (20, 0, smallRadius)]
 
         self.circleMovementRotations = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW,
-                rotateCircle6CCW]
+                                        rotateCircle6CCW]
 
         majorCirclesCenters = [(-20, 0), (-20, 0), (-20, 0), (20, 0), (20, 0),
                                (20, 0)]
@@ -147,7 +147,7 @@ class Type31:
         self.faces = [face1, face2, face3, face4, face5, face6]
 
         self.positions = [(0, 56.276921), (-73.737244, 42.572217), (73.737244, 42.572217), (-48.737244, -28.138461),
-            (48.737244, -28.138461), (0, -85.144435)]
+                          (48.737244, -28.138461), (0, -85.144435)]
 
         self.colors = [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
 
@@ -195,11 +195,11 @@ class Type32:
         face6 = [20, 21, 22, 23]
         self.faces = [face1, face2, face3, face4, face5, face6]
         self.positions = [(0, 126.847103), (-20, 113.720327), (20, 113.720327), (0, 103.700661), (-38.484692, 45.313158),
-         (-59.852814, 34.556038), (-39.807407, 22.982817), (-58.484692, 10.672142), (38.484692, 45.313158),
-         (59.852814, 34.556038), (39.807407, 22.982817), (58.484692, 10.672142), (-108.484692, -39.539656),
-         (-89.807407, -51.850331), (-109.852814, -63.423552), (-88.484692, -74.180672), (0, -45.965634),
-         (-20, -55.9853), (20, -55.9853), (0, -69.112076), (108.484692, -39.539656), (89.807407, -51.850331),
-         (109.852814, -63.423552), (88.484692, -74.180672)]
+                          (-59.852814, 34.556038), (-39.807407, 22.982817), (-58.484692, 10.672142), (38.484692, 45.313158),
+                          (59.852814, 34.556038), (39.807407, 22.982817), (58.484692, 10.672142), (-108.484692, -39.539656),
+                          (-89.807407, -51.850331), (-109.852814, -63.423552), (-88.484692, -74.180672), (0, -45.965634),
+                          (-20, -55.9853), (20, -55.9853), (0, -69.112076), (108.484692, -39.539656), (89.807407, -51.850331),
+                          (109.852814, -63.423552), (88.484692, -74.180672)]
 
         self.colors = [(184, 10, 49), (0, 68, 175), (0, 156, 70), (255, 0, 255), (255, 214, 0), (255, 87, 0)]
 
@@ -234,7 +234,7 @@ class Type32:
         cyan4 = MovingPoint(23, 5)
 
         self.points = [red1, red2, red3, red4, blue1, blue2, blue3, blue4, green1, green2, green3, green4, purple1, purple2,
-                purple3, purple4, yellow1, yellow2, yellow3, yellow4, cyan1, cyan2, cyan3, cyan4]
+                       purple3, purple4, yellow1, yellow2, yellow3, yellow4, cyan1, cyan2, cyan3, cyan4]
 
         rotateCircle1CCW = [(0, 15), (2, 14), (15, 18), (14, 19), (18, 9), (19, 11), (9, 0), (11, 2), (21, 20),
                             (20, 22),
@@ -253,7 +253,7 @@ class Type32:
                             (19, 18), (18, 16)]
 
         self.circleMovements = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW,
-                rotateCircle6CCW]
+                                rotateCircle6CCW]
 
         smallRadius = -10
         rotateCircle1CCW = [(-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110), (-50, 28.867513, 110),
@@ -282,7 +282,7 @@ class Type32:
                             (0, -57.735027, smallRadius), (0, -57.735027, smallRadius)]
 
         self.circleMovementRotations = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW,
-                rotateCircle6CCW]
+                                        rotateCircle6CCW]
 
         majorCirclesCenters = [(-50, 28.867513), (-50, 28.867513), (50, 28.867513), (50, 28.867513), (0, -57.735027),
                                (0, -57.735027)]
@@ -330,7 +330,6 @@ class Type41:
 
         self.circleMovements = [rotateCircle1CCW, rotateCircle2CCW, rotateCircle3CCW, rotateCircle4CCW, rotateCircle5CCW]
 
-        mediumRadius = 75 / 2
         largeRadius = 136.60254 / 2
         smallRadius = 100 / 2
         rotateCircle1CCW = [(-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius), (-25, 25, smallRadius)]
@@ -346,8 +345,6 @@ class Type41:
         self.circleCoordsAndRadii = majorCirclesCenters, majorCirclesRadii
 
 
-
-
 class MovingPoint:
     def __init__(self, initPositionIndex, initColor):
         self.positionIndex = initPositionIndex
@@ -360,6 +357,8 @@ class TheCube:
         self.typeNum = typeNum
         if typeNum == 23:
             self.configuration = Type23()
+        elif typeNum == 22:
+            self.configuration = Type22()
         elif typeNum == 31:
             self.configuration = Type31()
         elif typeNum == 32:
@@ -794,4 +793,3 @@ def SolveCube(screen, currentCube, cubeMoves, solutionVec):  # BAD
     print("Face ", faceWithMaxColorIndex, " is solved:", CheckIfFaceIsSolved(faceWithMaxColorIndex, currentCube.configuration.points))
 
     return cubeMoves
-

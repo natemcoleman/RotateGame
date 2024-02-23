@@ -4,14 +4,14 @@ import pygame
 pygame.init()
 
 theCube = RotateLibrary.TheCube(41)
-numRandomRotationsForSolution = 5
+numRandomRotationsForSolution = 2
 width, height = 800, 600
 numRandomRotationsShuffle = 3
 
 solutionCube = RotateLibrary.TheCube(theCube.typeNum)
 
 solutionScreen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-pygame.display.set_caption("2D Rubiks Cube")
+pygame.display.set_caption("ChromaSpin")
 
 randomOrder = RotateLibrary.CreateRandomOrder(solutionCube, solutionScreen, numRandomRotationsForSolution)
 RotateLibrary.ShowSolution(solutionCube, solutionScreen, randomOrder)
@@ -30,7 +30,7 @@ while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             rotateCircleIndex = RotateLibrary.GetClosestLargeCircle(theCube, mouse_x, mouse_y)
             moves.append((rotateCircleIndex, keys[pygame.K_SPACE]))
-            RotateLibrary.Rotate(screen, theCube, rotateCircleIndex, keys[pygame.K_SPACE], randomOrder, 0.75) #problem here
+            RotateLibrary.Rotate(screen, theCube, rotateCircleIndex, keys[pygame.K_SPACE], randomOrder, 0.75)  # problem here
             RotateLibrary.CheckIfSolved(theCube, randomOrder)
 
         elif event.type == pygame.KEYDOWN:
